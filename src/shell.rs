@@ -41,3 +41,9 @@ pub fn forego_start() -> Result<ExitStatus> {
 
   Command::new("nix-shell").args(&args).spawn()?.wait()
 }
+
+pub fn ember_start() -> Result<ExitStatus> {
+  let args = ["--command", "yarn && yarn exec ember server"];
+
+  Command::new("nix-shell").args(&args).spawn()?.wait()
+}

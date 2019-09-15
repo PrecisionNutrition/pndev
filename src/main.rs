@@ -8,6 +8,8 @@ use log::{info, warn, trace};
 
 use std::str::FromStr;
 
+use std::path::Path;
+
 mod check;
 mod shell;
 
@@ -92,9 +94,15 @@ fn start_command() -> Result<(), Error> {
 
   trace!("start command");
 
-  shell::docker_up()?;
+  if Path::new("docker-compose.yml").exists() {
+    shell::docker_up()?;
+  }
 
-  shell::forego_start()?;
+  if Path::new("Gemfile.lock").exists() {
+    shell::forego_start()?;
+  } else if Path::new("yarn.lock").exists() {
+    shell::ember_start()?;
+  }
 
   trace!("start command done");
 

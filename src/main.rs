@@ -8,6 +8,8 @@ use log::{info, warn};
 
 use std::str::FromStr;
 
+mod check;
+
 // Handling command parsing
 // taken from https://github.com/Peternator7/strum/blob/master/strum/src/lib.rs#L55
 #[derive(Debug)]
@@ -68,9 +70,8 @@ fn main() -> Result<(), ExitFailure> {
   info!("LogLevel Info");
 
   match args.command {
-    //Command::Help => print_help(),
     Command::Status => (),
-    Command::Check => (),
+    Command::Check => check::check_all(),
     Command::Clone => (),
   };
 

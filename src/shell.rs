@@ -37,13 +37,13 @@ pub fn docker_down() -> Result<ExitStatus> {
 }
 
 pub fn forego_start() -> Result<ExitStatus> {
-  let args = ["--command", "bundle && yarn && pnforego start"];
+  let args = ["--run", "bundle && yarn && pnforego start"];
 
   Command::new("nix-shell").args(&args).spawn()?.wait()
 }
 
 pub fn ember_start() -> Result<ExitStatus> {
-  let args = ["--command", "yarn && yarn exec ember server"];
+  let args = ["--run", "yarn && yarn exec ember server"];
 
   Command::new("nix-shell").args(&args).spawn()?.wait()
 }

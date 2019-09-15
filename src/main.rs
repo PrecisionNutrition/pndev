@@ -2,6 +2,7 @@ use structopt::StructOpt;
 use clap_verbosity_flag::Verbosity;
 
 use failure::Error;
+use failure::bail;
 use exitfailure::ExitFailure;
 
 use log::{info, warn, trace};
@@ -95,7 +96,11 @@ fn start_command() -> Result<(), Error> {
   trace!("start command");
 
   if Path::new("docker-compose.yml").exists() {
-    shell::docker_up()?;
+    let status = shell::docker_up()?;
+
+    if status.code().unwrap() == 0 {
+      bail!("docker up failed")
+    }
   }
 
   if Path::new("Gemfile.lock").exists() {

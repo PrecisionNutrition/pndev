@@ -62,6 +62,13 @@ struct Cli {
   command: Command,
 }
 
+fn status_command() {
+  match check::pn_doctor() {
+    Ok(_) => (),
+    Err(msg) => msg,
+  }
+}
+
 fn main() -> Result<(), ExitFailure> {
   let args = Cli::from_args();
   args.log.log_all(args.verbose.log_level())?;
@@ -70,7 +77,7 @@ fn main() -> Result<(), ExitFailure> {
   info!("LogLevel Info");
 
   match args.command {
-    Command::Status => (),
+    Command::Status => status_command(),
     Command::Check => check::check_all(),
     Command::Clone => (),
   };

@@ -13,3 +13,7 @@ jobs:
         with:
             toolchain: stable
             override: true
+      - uses: actions-rs/cargo@v1
+        with:
+          command: build
+          arguments: --release --all-features

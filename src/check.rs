@@ -1,25 +1,27 @@
 use log::trace;
 use std::process::Command;
+use ansi_term::Colour::Green;
+use ansi_term::Colour::Red;
 
 pub fn check_all() {
   trace!("check::check_all called");
 
   if check_installed("git") {
-    trace!("git installed")
+    println!("{} git installed", Green.paint("✓"));
   } else {
-    trace!("git not installed")
+    println!("{} git not installed", Red.paint("✗"));
   }
 
   if check_installed("nix") {
-    trace!("nix installed")
+    println!("{} nix installed", Green.paint("✓"));
   } else {
-    trace!("nix not installed")
+    println!("{} nix not installed", Red.paint("✗"));
   }
 
   if check_installed("docker") {
-    trace!("docker installed")
+    println!("{} docker installed", Green.paint("✓"));
   } else {
-    trace!("docker not installed")
+    println!("{} docker not installed", Red.paint("✗"));
   }
 }
 

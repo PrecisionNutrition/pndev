@@ -126,6 +126,16 @@ fn stop_command() -> Result<(), Error> {
   Ok(())
 }
 
+fn clone_command() -> Result<(), Error> {
+  check::pn_doctor()?;
+
+  trace!("clone command");
+
+	bail!("not implemented");
+
+  //Ok(())
+}
+
 fn main() -> Result<(), ExitFailure> {
   let args = Cli::from_args();
   args.log.log_all(args.verbose.log_level())?;
@@ -139,7 +149,7 @@ fn main() -> Result<(), ExitFailure> {
     Command::Start => start_command(),
     Command::Stop => stop_command(),
     Command::Check => check::check_all(),
-    Command::Clone => Ok(()),
+    Command::Clone => clone_command(),
   };
 
   Ok(command_result?)

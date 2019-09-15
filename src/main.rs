@@ -98,7 +98,7 @@ fn start_command() -> Result<(), Error> {
   if Path::new("docker-compose.yml").exists() {
     let status = shell::docker_up()?;
 
-    if status.code().unwrap() % 255 == 0 {
+    if !(status.code().unwrap() % 255 == 0) {
       bail!("docker up failed")
     }
   }

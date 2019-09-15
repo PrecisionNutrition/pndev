@@ -14,12 +14,12 @@ pub fn pn_doctor() -> Result<(), Error> {
   trace!("pn_doctor called");
   for app in APPS.iter() {
     if !check_app_installed(app) {
-      bail!("{} not installed", app);
+      bail!("{} not installed, run pndev check for help", app);
     }
   }
 
   if !check_host() {
-    bail!("es-dev not configured");
+    bail!("es-dev not configured, run pndev check for help");
   }
 
   Ok(())

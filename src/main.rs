@@ -38,7 +38,6 @@ enum Command {
   Shell,
   Start,
   Stop,
-  //Help
 }
 
 impl FromStr for Command {

@@ -50,9 +50,15 @@ type
 nix-shell
 ```
 
-in your console to start
+in your console to start.
 
-the basic workflow is 
+On first use you will have to install the toolchain
+
+```
+rustup toolchain install stable
+```
+
+On later uses the basic workflow is
 
 ```
 cargo run

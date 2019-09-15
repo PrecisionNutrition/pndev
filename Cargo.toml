@@ -23,5 +23,7 @@ ansi_term = "0.12"
 log = "0.4.8"
 env_logger = "0.6.2"
 
+# doctor
 dns-lookup = "1.0.1"
+sys-info = "0.5.8"
 

@@ -42,6 +42,12 @@ pub fn check_all() -> Result<(), Error> {
     println!("{} es-dev.precisionnutrition.com does not resolve", Red.paint("✗"));
   }
 
+  if check_github() {
+    println!("{} github ssh access allowed", Green.paint("✓"));
+  } else {
+    println!("{} githus ssh access not allowed", Red.paint("✗"));
+  }
+
   Ok(())
 }
 
@@ -56,9 +62,21 @@ fn check_app_installed(command: &str) -> bool {
   }
 }
 
-pub fn check_host() -> bool {
+fn check_host() -> bool {
   match lookup_host(HOSTNAME) {
     Ok(_) => true,
+    Err(_) => false,
+  }
+}
+
+fn check_github() -> bool {
+  let result = Command::new("ssh")
+    .args(&["-T", "git@github.com"])
+    .output();
+
+  match result {
+    // ssh -T returns 1 even if auth works
+    Ok(output) => output.status.code().unwrap() % 255 == 1,
     Err(_) => false,
   }
 }

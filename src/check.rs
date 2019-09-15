@@ -5,24 +5,28 @@ use ansi_term::Colour::Red;
 
 use dns_lookup::lookup_host;
 
+use failure::{bail, Error};
+
 const APPS: [&str; 3] = ["git", "nix", "docker"];
 const HOSTNAME: &str = "es-dev.precisionnutrition.com";
 
-pub fn pn_doctor() -> Result<(), &'static str> {
+pub fn pn_doctor() -> Result<(), Error> {
+  trace!("pn_doctor called");
   for app in APPS.iter() {
     if !check_app_installed(app) {
-      // seems bad
-      // https://stackoverflow.com/questions/23975391/how-to-convert-a-string-into-a-static-str
-      let err = format!("{} not installed", app);
-      return Err(Box::leak(err.into_boxed_str()));
+      bail!("{} not installed", app);
     }
+  }
+
+  if !check_host() {
+    bail!("es-dev not configured");
   }
 
   Ok(())
 }
 
-pub fn check_all() {
-  trace!("check::check_all called");
+pub fn check_all() -> Result<(), Error> {
+  trace!("check_all called");
 
   for app in APPS.iter() {
     if check_app_installed(app) {
@@ -37,6 +41,8 @@ pub fn check_all() {
   } else {
     println!("{} es-dev.precisionnutrition.com does not resolve", Red.paint("✗"));
   }
+
+  Ok(())
 }
 
 fn check_app_installed(command: &str) -> bool {

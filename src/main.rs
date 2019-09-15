@@ -1,7 +1,8 @@
 use structopt::StructOpt;
 use clap_verbosity_flag::Verbosity;
 
-//use failure::ResultExt;
+use failure::ResultExt;
+use failure::Error;
 use exitfailure::ExitFailure;
 
 use log::{info, warn};
@@ -62,11 +63,10 @@ struct Cli {
   command: Command,
 }
 
-fn status_command() {
-  match check::pn_doctor() {
-    Ok(_) => (),
-    Err(msg) => msg,
-  }
+fn status_command() -> Result<(), Error>{
+  let doctor_res = check::pn_doctor();
+
+  doctor_res
 }
 
 fn main() -> Result<(), ExitFailure> {
@@ -76,11 +76,11 @@ fn main() -> Result<(), ExitFailure> {
   warn!("LogLevel Warn");
   info!("LogLevel Info");
 
-  match args.command {
+  let command_result = match args.command {
     Command::Status => status_command(),
     Command::Check => check::check_all(),
-    Command::Clone => (),
+    Command::Clone => Ok(()),
   };
 
-  Ok(())
+  Ok(command_result?)
 }

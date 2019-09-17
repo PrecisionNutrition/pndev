@@ -55,7 +55,7 @@ struct Cli {
 }
 
 fn shell_command() -> Result<(), Error> {
-  check::pn_doctor()?;
+  check::check_all()?;
 
   trace!("shell started ");
 
@@ -67,7 +67,7 @@ fn shell_command() -> Result<(), Error> {
 }
 
 fn start_command() -> Result<(), Error> {
-  check::pn_doctor()?;
+  check::check_all()?;
 
   trace!("start command");
 
@@ -91,7 +91,7 @@ fn start_command() -> Result<(), Error> {
 }
 
 fn stop_command() -> Result<(), Error> {
-  check::pn_doctor()?;
+  check::check_all()?;
 
   trace!("stop command");
 
@@ -103,7 +103,7 @@ fn stop_command() -> Result<(), Error> {
 }
 
 fn clone_command() -> Result<(), Error> {
-  check::pn_doctor()?;
+  check::check_all()?;
 
   trace!("clone command");
 
@@ -113,11 +113,17 @@ fn clone_command() -> Result<(), Error> {
 }
 
 fn prepare_command() -> Result<(), Error> {
-  check::pn_doctor()?;
+  check::check_all()?;
 
-	bail!("not implemented");
+  trace!("anonymize command");
 
-  //Ok(())
+  if Path::new("Gemfile.lock").exists() {
+    shell::rails_migrate()?;
+    shell::rails_anonymize()?;
+    shell::rails_bootstrap()?;
+  }
+
+  Ok(())
 }
 
 
@@ -133,7 +139,7 @@ fn main() -> Result<(), ExitFailure> {
     Command::Shell => shell_command(),
     Command::Start => start_command(),
     Command::Stop => stop_command(),
-    Command::Doctor => check::check_all(),
+    Command::Doctor => check::doctor(),
     Command::Clone => clone_command(),
   };
 

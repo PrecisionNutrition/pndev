@@ -10,7 +10,7 @@ use failure::{bail, Error};
 const APPS: [&str; 3] = ["git", "nix", "docker"];
 const HOSTNAME: &str = "es-dev.precisionnutrition.com";
 
-pub fn pn_doctor() -> Result<(), Error> {
+pub fn check_all() -> Result<(), Error> {
   trace!("pn_doctor called");
   for app in APPS.iter() {
     if !check_app_installed(app) {
@@ -25,7 +25,7 @@ pub fn pn_doctor() -> Result<(), Error> {
   Ok(())
 }
 
-pub fn check_all() -> Result<(), Error> {
+pub fn doctor() -> Result<(), Error> {
   trace!("check_all called");
 
   for app in APPS.iter() {

@@ -37,7 +37,7 @@ pub fn docker_down() -> Result<ExitStatus> {
 }
 
 pub fn forego_start() -> Result<ExitStatus> {
-  let args = ["--run", "bundle && yarn && pnforego start"];
+  let args = ["--run", "bundle && yarn && bundle exec rails db:create db:migrate && pnforego start"];
 
   Command::new("nix-shell").args(&args).spawn()?.wait()
 }

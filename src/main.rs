@@ -17,7 +17,13 @@ mod shell;
 enum Command {
   #[structopt(name = "clone")]
   /// clone one of the apps
-  Clone,
+  Clone {
+    #[structopt(long = "all")]
+    all: bool,
+
+    #[structopt(name = "name")]
+    name: Option<String>,
+  },
 
   #[structopt(name = "doctor")]
   /// diagnose system setup for pndev
@@ -32,7 +38,7 @@ enum Command {
   Shell,
 
   #[structopt(name = "start")]
-  /// start docker and the development server
+  /// start ember s or docker + rails - depends on application
   Start,
 
   #[structopt(name = "stop")]
@@ -102,20 +108,11 @@ fn stop_command() -> Result<(), Error> {
   Ok(())
 }
 
-fn clone_command() -> Result<(), Error> {
-  check::check_all()?;
-
-  trace!("clone command");
-
-	bail!("not implemented");
-
-  //Ok(())
-}
-
 fn prepare_command() -> Result<(), Error> {
   check::check_all()?;
 
   trace!("anonymize command");
+  // TODO ensure credentials are present
 
   if Path::new("Gemfile.lock").exists() {
     shell::rails_migrate()?;
@@ -124,6 +121,18 @@ fn prepare_command() -> Result<(), Error> {
   }
 
   Ok(())
+}
+
+fn clone_command(name: Option<String>, all: bool) -> Result<(), Error> {
+  check::check_all()?;
+
+  trace!("{:?}", name);
+  trace!("{:?}", all);
+  trace!("clone command");
+
+	bail!("not implemented");
+
+  //Ok(())
 }
 
 
@@ -140,7 +149,7 @@ fn main() -> Result<(), ExitFailure> {
     Command::Start => start_command(),
     Command::Stop => stop_command(),
     Command::Doctor => check::doctor(),
-    Command::Clone => clone_command(),
+    Command::Clone{name, all} => clone_command(name, all),
   };
 
   Ok(command_result?)

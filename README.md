@@ -7,7 +7,9 @@ A CLI tool to aid development @ PN
 * Download the latest release for your platform (Linux or OSX)
 from the [releases](https://github.com/PrecisionNutrition/pndev/releases) page.
 
-* copy the binary in your `$PATH` (i.e `/usr/local/bin`)
+* copy the binary in your `$PATH` (i.e `sudo cp pndev-linux-amd64 /usr/local/bin/pndev`)
+
+* make it executable `sudo chmod +x /usr/local/bin/pndev`
 
 ## Usage
 
@@ -45,7 +47,10 @@ Install any of the missing applications
 
 [Download Mac](https://docs.docker.com/docker-for-mac/install/)
 
-For Linux see your distribution documentation
+[Ubuntu](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
+
+on old ubuntu you might have to get a better version of `docker-compose`
+https://www.digitalocean.com/community/tutorials/how-to-install-docker-compose-on-ubuntu-16-04
 
 #### Nix
 
@@ -55,6 +60,11 @@ you can install it with the following commands
 
 ```
 curl https://nixos.org/nix/install | sh
+
+# add
+# . /home/ubuntu/.nix-profile/etc/profile.d/nix.sh
+# to your bashrc/zshrc
+
 nix-channel --add https://nixos.org/channels/nixos-19.03 nixos
 nix-channel --add https://nixos.org/channels/nixos-19.03 nixpkgs
 ```
@@ -121,7 +131,11 @@ and run the prepare command
 pndev prepare
 ```
 
-This will start the rails server, install the dependencies and prepare the database
+This will start the databases, install the dependencies and prepare the database
+
+*NOTE*:
+
+you can safely re-run the `pndev prepare` command every time you want to reset your database
 
 
 ### Start

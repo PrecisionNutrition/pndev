@@ -130,9 +130,23 @@ fn prepare_command() -> Result<(), Error> {
   }
 
   if Path::new("Gemfile.lock").exists() {
-    shell::rails_migrate()?;
-    shell::rails_anonymize()?;
-    shell::rails_bootstrap()?;
+    let mut status = shell::rails_migrate()?;
+
+    # TODO move status check inside shell
+    if !(status.code().unwrap() % 255 == 0) {
+      bail!("migrate failed")
+    }
+
+    status = shell::rails_anonymize()?;
+
+    if !(status.code().unwrap() % 255 == 0) {
+      bail!("anonymize failed")
+    }
+    status = shell::rails_bootstrap()?;
+
+    if !(status.code().unwrap() % 255 == 0) {
+      bail!("bootstrap failed")
+    }
   } else {
     bail!("No Gemfile found, are you in the right directory?")
   }

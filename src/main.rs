@@ -8,6 +8,7 @@ use exitfailure::ExitFailure;
 use log::{info, warn, trace};
 
 use std::path::Path;
+use dirs::home_dir;
 
 mod check;
 mod shell;
@@ -113,12 +114,27 @@ fn prepare_command() -> Result<(), Error> {
   check::check_all()?;
 
   trace!("anonymize command");
-  // TODO ensure credentials are present
+  let mut path = home_dir().unwrap();
+  path.push(".pn_anonymize_creds");
+
+  if !path.exists() {
+    bail!("Please create ~/.pn_anonymize_creds")
+  }
+
+  if Path::new("docker-compose.yml").exists() {
+    let status = shell::docker_up()?;
+
+    if !(status.code().unwrap() % 255 == 0) {
+      bail!("docker up failed")
+    }
+  }
 
   if Path::new("Gemfile.lock").exists() {
     shell::rails_migrate()?;
     shell::rails_anonymize()?;
     shell::rails_bootstrap()?;
+  } else {
+    bail!("No Gemfile found, are you in the right directory?")
   }
 
   Ok(())

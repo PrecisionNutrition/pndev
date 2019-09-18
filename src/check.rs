@@ -55,7 +55,7 @@ fn check_app_installed(command: &str) -> bool {
   let result = Command::new(command)
     .args(&["--version"])
     .output();
-  
+
   match result {
     Ok(_) => true,
     Err(_) => false,

@@ -11,6 +11,7 @@ use std::path::Path;
 
 mod check;
 mod shell;
+mod git;
 
 // available commands
 #[derive(StructOpt, Debug)]
@@ -126,13 +127,37 @@ fn prepare_command() -> Result<(), Error> {
 fn clone_command(name: Option<String>, all: bool) -> Result<(), Error> {
   check::check_all()?;
 
+  let apps = [
+    "eternal-sledgehammer",
+    "es-student",
+    "fitpro",
+    "es-certification",
+    "payment-next"
+  ];
+
   trace!("{:?}", name);
   trace!("{:?}", all);
   trace!("clone command");
 
-	bail!("not implemented");
 
-  //Ok(())
+  if all {
+    for app in apps.iter() {
+      info!("Cloning {}", app);
+      git::clone(app)?;
+    }
+  } else {
+    match name {
+      Some(name) => {
+        info!("Cloning {}", name);
+        git::clone(&name[..])?;
+      },
+      None => bail!("Please specify an app name or --all"),
+    }
+  };
+
+  info!("Clone completed");
+
+  Ok(())
 }
 
 

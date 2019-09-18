@@ -17,7 +17,7 @@ mod git;
 #[derive(StructOpt, Debug)]
 enum Command {
   #[structopt(name = "clone")]
-  /// clone one of the apps
+  /// clone one or all the pn apps into ~/DEV/PN
   Clone {
     #[structopt(long = "all")]
     all: bool,
@@ -127,6 +127,8 @@ fn prepare_command() -> Result<(), Error> {
 fn clone_command(name: Option<String>, all: bool) -> Result<(), Error> {
   check::check_all()?;
 
+  trace!("clone command");
+
   let apps = [
     "eternal-sledgehammer",
     "es-student",
@@ -134,11 +136,6 @@ fn clone_command(name: Option<String>, all: bool) -> Result<(), Error> {
     "es-certification",
     "payment-next"
   ];
-
-  trace!("{:?}", name);
-  trace!("{:?}", all);
-  trace!("clone command");
-
 
   if all {
     for app in apps.iter() {

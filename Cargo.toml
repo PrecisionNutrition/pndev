@@ -27,3 +27,6 @@ env_logger = "0.6.2"
 dns-lookup = "1.0.1"
 sys-info = "0.5.8"
 
+# dirs
+dirs = "2.0"
+

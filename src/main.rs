@@ -132,7 +132,7 @@ fn prepare_command() -> Result<(), Error> {
   if Path::new("Gemfile.lock").exists() {
     let mut status = shell::rails_migrate()?;
 
-    # TODO move status check inside shell
+    //# TODO move status check inside shell
     if !(status.code().unwrap() % 255 == 0) {
       bail!("migrate failed")
     }

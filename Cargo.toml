@@ -1,6 +1,6 @@
 [package]
 name = "pndev"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Mattia Gheda <ghedamat@gmail.com>"]
 edition = "2018"
 
@@ -29,4 +29,7 @@ sys-info = "0.5.8"
 
 # dirs
 dirs = "2.0"
+
+
+self_update = "0.7"
 

@@ -10,6 +10,8 @@ use log::{info, warn, trace};
 use std::path::Path;
 use dirs::home_dir;
 
+use self_update;
+
 mod check;
 mod shell;
 mod git;
@@ -55,6 +57,9 @@ enum Command {
   #[structopt(name = "ps")]
   /// print docker status
   Ps,
+
+  #[structopt(name = "update")]
+  Update,
 }
 
 // CLI definition
@@ -207,7 +212,23 @@ fn main() -> Result<(), ExitFailure> {
     Command::Ps => ps_command(),
     Command::Doctor => check::doctor(),
     Command::Clone{name, all} => clone_command(name, all),
+    Command::Update => update(),
   };
 
   Ok(command_result?)
+}
+
+fn update() -> Result<(), Error> {
+  let token = std::env::var("DOWNLOAD_AUTH_TOKEN").unwrap();
+    let status = self_update::backends::github::Update::configure()
+        .repo_owner("PrecisionNutrition")
+        .repo_name("pndev")
+        .bin_name("pndev-linux-amd64")
+        .auth_token(&token)
+        .show_download_progress(true)
+        .current_version(self_update::cargo_crate_version!())
+        .build()?
+        .update()?;
+    println!("Update status: `{}`!", status.version());
+    Ok(())
 }

@@ -1,4 +1,7 @@
-on: [push]
+on:
+  push: 
+    tags:
+     - '*'
 
 name: build
 
@@ -31,4 +34,4 @@ jobs:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: target/release/${{ matrix.artifact_name }}
         asset_name: ${{ matrix.asset_name }}
-        tag: version-${{github.sha}}
+        tag: ${{github.ref}}

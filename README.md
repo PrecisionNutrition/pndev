@@ -195,4 +195,11 @@ example
 cargo run -- check -vvvv
 ```
 
-
+## Releasing
+* commit all changes and push
+* bump version in `Cargo.toml`
+* run `cargo build`
+* commit changes to `Cargo.toml` and `Cargo.lock`, name commit X.X.X
+* `git tag X.X.X`
+* `git push`
+* `git push --tags`

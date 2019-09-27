@@ -57,7 +57,6 @@ struct Cli {
   #[structopt(flatten)]
   log: clap_log_flag::Log,
 
-  /// Available commands: check, clone, status, shell, start, stop
   #[structopt(subcommand)]
   command: Command,
 }
@@ -80,11 +79,7 @@ fn start_command() -> Result<(), Error> {
   trace!("start command");
 
   if Path::new("docker-compose.yml").exists() {
-    let status = shell::docker_up()?;
-
-    if !(status.code().unwrap() % 255 == 0) {
-      bail!("docker up failed")
-    }
+    shell::docker_up()?;
   }
 
   if Path::new("Gemfile.lock").exists() {
@@ -122,31 +117,15 @@ fn prepare_command() -> Result<(), Error> {
   }
 
   if Path::new("docker-compose.yml").exists() {
-    let status = shell::docker_up()?;
-
-    if !(status.code().unwrap() % 255 == 0) {
-      bail!("docker up failed")
-    }
+    shell::docker_up()?;
   }
 
   if Path::new("Gemfile.lock").exists() {
-    let mut status = shell::rails_migrate()?;
+    shell::rails_migrate()?;
 
-    //# TODO move status check inside shell
-    if !(status.code().unwrap() % 255 == 0) {
-      bail!("migrate failed")
-    }
+    shell::rails_anonymize()?;
 
-    status = shell::rails_anonymize()?;
-
-    if !(status.code().unwrap() % 255 == 0) {
-      bail!("anonymize failed")
-    }
-    status = shell::rails_bootstrap()?;
-
-    if !(status.code().unwrap() % 255 == 0) {
-      bail!("bootstrap failed")
-    }
+    shell::rails_bootstrap()?;
   } else {
     bail!("No Gemfile found, are you in the right directory?")
   }

@@ -59,6 +59,25 @@ pub fn docker_down() -> Result<ExitStatus, Error> {
   }
 }
 
+pub fn docker_ps() -> Result<ExitStatus, Error> {
+  pndev_setup()?;
+
+  let mut args = vec!["-f"];
+
+  let pndev_path = format!("{}/pndev/catalog/docker-compose.yml", git::pn_repos_path());
+  args.push(&pndev_path);
+
+  args.extend_from_slice(&["ps"]);
+
+  let status = Command::new("docker-compose").args(&args).spawn()?.wait()?;
+
+  if !(status.code().unwrap() % 255 == 0) {
+    bail!("docker ps failed");
+  } else {
+    Ok(status)
+  }
+}
+
 pub fn forego_start() -> Result<ExitStatus, Error> {
   let args = ["--run", "bundle && yarn && bundle exec rails db:create db:migrate && pnforego start"];
 

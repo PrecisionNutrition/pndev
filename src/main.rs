@@ -20,7 +20,8 @@ enum Command {
   #[structopt(name = "clone")]
   /// clone one or all the pn apps into ~/DEV/PN
   Clone {
-    #[structopt(long = "all")]
+    #[structopt(short = "a", long = "all")]
+    /// clones the main pn apps (es, fitpro, student..)
     all: bool,
 
     #[structopt(name = "name")]
@@ -41,11 +42,19 @@ enum Command {
 
   #[structopt(name = "start")]
   /// start docker and ember s or rails - depends on application
-  Start,
+  Start {
+    #[structopt(short ="d", long = "only-docker")]
+    /// do not attempt to start also rails or ember apps
+    docker: bool
+  },
 
   #[structopt(name = "stop")]
   /// stop docker
   Stop,
+
+  #[structopt(name = "ps")]
+  /// print docker status
+  Ps,
 }
 
 // CLI definition
@@ -73,12 +82,18 @@ fn shell_command() -> Result<(), Error> {
   Ok(())
 }
 
-fn start_command() -> Result<(), Error> {
+fn start_command(docker_only: bool) -> Result<(), Error> {
   check::check_all()?;
 
   trace!("start command");
 
   shell::docker_up()?;
+
+  if docker_only {
+    info!("Starting only docker services");
+    return Ok(());
+  }
+
 
   if Path::new("Gemfile.lock").exists() {
     shell::forego_start()?;
@@ -99,6 +114,20 @@ fn stop_command() -> Result<(), Error> {
   shell::docker_down()?;
 
   trace!("stop command done");
+
+  Ok(())
+}
+
+fn ps_command() -> Result<(), Error> {
+  check::check_all()?;
+
+  trace!("ps command");
+
+  println!("Docker ps output:");
+
+  shell::docker_ps()?;
+
+  trace!("ps command done");
 
   Ok(())
 }
@@ -173,8 +202,9 @@ fn main() -> Result<(), ExitFailure> {
   let command_result = match args.command {
     Command::Prepare => prepare_command(),
     Command::Shell => shell_command(),
-    Command::Start => start_command(),
+    Command::Start{docker} => start_command(docker),
     Command::Stop => stop_command(),
+    Command::Ps => ps_command(),
     Command::Doctor => check::doctor(),
     Command::Clone{name, all} => clone_command(name, all),
   };

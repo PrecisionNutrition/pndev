@@ -45,10 +45,27 @@ pub fn doctor() -> Result<(), Error> {
   if check_github() {
     println!("{} github ssh access allowed", Green.paint("✓"));
   } else {
-    println!("{} githus ssh access not allowed", Red.paint("✗"));
+    println!("{} github ssh access not allowed", Red.paint("✗"));
+  }
+
+  if check_anonymize_creds() {
+    println!("{} ~/.pn_anonymize_creds present", Green.paint("✓"));
+  } else {
+    println!("{} ~/.pn_anonymize_creds missing", Red.paint("✗"));
   }
 
   Ok(())
+}
+
+fn check_anonymize_creds() -> bool {
+  let mut path = dirs::home_dir().unwrap();
+  path.push(".pn_anonymize_creds");
+
+  if path.exists() {
+    true
+  } else {
+    false
+  }
 }
 
 fn check_app_installed(command: &str) -> bool {

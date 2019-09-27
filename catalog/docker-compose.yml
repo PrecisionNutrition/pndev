@@ -1,0 +1,71 @@
+version: '3.4'
+
+x-default_env: &default_env
+  environment:
+    - DATABASE_USERNAME=es
+    - DATABASE_HOST=postgres
+    - DATABASE_PORT=5432
+    - REDIS_URL=redis://redis_sidekiq:6379/0/sidekiq
+    - REDIS_CACHE_URL=redis://redis_cache:6666/0/cache
+    - REDIS_SESSION_STORE_URL=redis://redis_session:6666/0/session
+    - REDIS_SIDEKIQ_URL=redis://redis_sidekiq:6379/0/sidekiq
+    - MAILER_ADDRESS=mailcatcher
+    - MAILER_PORT=1025
+    - HOME=/tmp
+    - DISPLAY=$DISPLAY
+    - SSH_AUTH_SOCK=/tmp/agent.sock
+
+
+x-default-links: &default_links
+  links:
+    - redis_cache
+    - redis_sidekiq
+    - postgres
+    - mailcatcher
+
+volumes:
+  pgdata:
+  redis:
+  redis_cache:
+
+services:
+  dockerhost:
+    image: qoomon/docker-host
+    cap_add: [ 'NET_ADMIN', 'NET_RAW' ]
+    #mem_limit: 8M
+    restart: on-failure
+  nginx:
+    build:
+      context: docker
+      dockerfile: Dockerfile.nginx-minimal
+    ports:
+      - "80:80"
+    links:
+      - dockerhost
+  mailcatcher:
+    image: schickling/mailcatcher
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+  redis_cache:
+    image: redis:4
+    volumes:
+      - redis_cache:/data
+    ports:
+      - "6666:6379"
+  redis_sidekiq:
+    image: redis:4
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis:/data
+  postgres:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.postgres
+    environment:
+      POSTGRES_USER: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"

@@ -40,7 +40,7 @@ enum Command {
   Shell,
 
   #[structopt(name = "start")]
-  /// start ember s or docker + rails - depends on application
+  /// start docker and ember s or rails - depends on application
   Start,
 
   #[structopt(name = "stop")]
@@ -78,9 +78,7 @@ fn start_command() -> Result<(), Error> {
 
   trace!("start command");
 
-  if Path::new("docker-compose.yml").exists() {
-    shell::docker_up()?;
-  }
+  shell::docker_up()?;
 
   if Path::new("Gemfile.lock").exists() {
     shell::forego_start()?;
@@ -116,9 +114,7 @@ fn prepare_command() -> Result<(), Error> {
     bail!("Please create ~/.pn_anonymize_creds")
   }
 
-  if Path::new("docker-compose.yml").exists() {
-    shell::docker_up()?;
-  }
+  shell::docker_up()?;
 
   if Path::new("Gemfile.lock").exists() {
     shell::rails_migrate()?;
@@ -143,18 +139,18 @@ fn clone_command(name: Option<String>, all: bool) -> Result<(), Error> {
     "es-student",
     "fitpro",
     "es-certification",
-    "payment-next"
+    "payment-next",
   ];
 
   if all {
     for app in apps.iter() {
-      info!("Cloning {}", app);
+      println!("Cloning {}", app);
       git::clone(app)?;
     }
   } else {
     match name {
       Some(name) => {
-        info!("Cloning {}", name);
+        println!("Cloning {}", name);
         git::clone(&name[..])?;
       },
       None => bail!("Please specify an app name or --all"),

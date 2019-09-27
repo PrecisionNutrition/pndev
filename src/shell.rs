@@ -1,7 +1,9 @@
 use std::process::{Command, ExitStatus};
-use sys_info::os_type;
 use failure::Error;
 use failure::bail;
+use std::path::Path;
+use crate::git;
+use log::{info};
 
 pub fn nix_shell() -> std::io::Result<ExitStatus> {
   let exe = "nix-shell";
@@ -9,14 +11,23 @@ pub fn nix_shell() -> std::io::Result<ExitStatus> {
   Command::new(exe).spawn()?.wait()
 }
 
+pub fn pndev_setup() -> Result<(), Error> {
+  let path = format!("{}/pndev", git::pn_repos_path());
+
+  if Path::new(&path[..]).exists() {
+    info!("pndev already cloned, if you want to update run git update in /DEV/PN/pndev");
+    Ok(())
+  } else {
+    git::clone("pndev")
+  }
+}
+
 pub fn docker_up() -> Result<ExitStatus, Error> {
+  pndev_setup()?;
   let mut args = vec!["-f"];
 
-  if os_type().unwrap() == "Darwin" {
-    args.push("docker-compose-minimal-osx.yml");
-  } else {
-    args.push("docker-compose-minimal.yml");
-  }
+  let pndev_path = format!("{}/pndev/catalog/docker-compose.yml", git::pn_repos_path());
+  args.push(&pndev_path);
 
   args.extend_from_slice(&["up", "--no-recreate", "-d"]);
 
@@ -29,24 +40,34 @@ pub fn docker_up() -> Result<ExitStatus, Error> {
   }
 }
 
-pub fn docker_down() -> std::io::Result<ExitStatus> {
+pub fn docker_down() -> Result<ExitStatus, Error> {
+  pndev_setup()?;
+
   let mut args = vec!["-f"];
 
-  if os_type().unwrap() == "Darwin" {
-    args.push("docker-compose-minimal-osx.yml");
-  } else {
-    args.push("docker-compose-minimal.yml");
-  }
+  let pndev_path = format!("{}/pndev/catalog/docker-compose.yml", git::pn_repos_path());
+  args.push(&pndev_path);
 
   args.extend_from_slice(&["down"]);
 
-  Command::new("docker-compose").args(&args).spawn()?.wait()
+  let status = Command::new("docker-compose").args(&args).spawn()?.wait()?;
+
+  if !(status.code().unwrap() % 255 == 0) {
+    bail!("docker down failed");
+  } else {
+    Ok(status)
+  }
 }
 
-pub fn forego_start() -> std::io::Result<ExitStatus> {
+pub fn forego_start() -> Result<ExitStatus, Error> {
   let args = ["--run", "bundle && yarn && bundle exec rails db:create db:migrate && pnforego start"];
 
-  Command::new("nix-shell").args(&args).spawn()?.wait()
+  let status = Command::new("nix-shell").args(&args).spawn()?.wait()?;
+  if !(status.code().unwrap() % 255 == 0) {
+    bail!("forego start failed")
+  } else {
+    Ok(status)
+  }
 }
 
 pub fn rails_migrate() -> Result<ExitStatus, Error> {

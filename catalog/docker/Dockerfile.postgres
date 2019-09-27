@@ -1,0 +1,2 @@
+FROM postgres:10.6
+COPY docker/init-user-db.sh /docker-entrypoint-initdb.d/init-user-db.sh

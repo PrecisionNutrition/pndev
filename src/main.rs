@@ -77,6 +77,7 @@ enum Command {
     Ps,
 
     #[structopt(name = "update")]
+    /// attempts to update pndev itself to the latest released version
     Update,
 }
 

@@ -5,21 +5,56 @@ use std::path::Path;
 use crate::git;
 use log::{info};
 
-pub fn nix_shell() -> std::io::Result<ExitStatus> {
-  let exe = "nix-shell";
-
-  Command::new(exe).spawn()?.wait()
+#[derive(Debug)]
+pub struct Shell<'a> {
+  cmd: Option<String>,
+  args: Vec<&'a str>,
 }
 
-pub fn pndev_setup() -> Result<(), Error> {
-  let path = format!("{}/pndev", git::pn_repos_path());
-
-  if Path::new(&path[..]).exists() {
-    info!("pndev already cloned, if you want to update run git update in /DEV/PN/pndev");
-    Ok(())
-  } else {
-    git::clone("pndev")
+impl<'a> Shell<'a> {
+  pub fn new() -> Self {
+    Default::default()
   }
+
+  pub fn cmd(&mut self, cmd: &str) -> &mut Self {
+    self.cmd = Some(cmd.to_owned());
+    self
+  }
+
+  pub fn args(&mut self, args: Vec<&'a str>) -> &mut Self {
+    self.args = args;
+    self
+  }
+
+  pub fn spawn(&mut self) -> Result<ExitStatus, Error> {
+    let cmd = match &self.cmd {
+      Some(cmd) => cmd,
+      None => bail!("missing cmd"),
+    };
+
+    let status = Command::new(cmd).args(&self.args).spawn()?.wait()?;
+
+    if !(status.code().unwrap() % 255 == 0) {
+      bail!("docker up failed");
+    } else {
+      Ok(status)
+    }
+  }
+}
+
+impl Default for Shell<'_> {
+  fn default() -> Self {
+    Self {
+      cmd: None,
+      args: vec![],
+    }
+  }
+}
+
+pub fn nix_shell() -> Result<ExitStatus, Error> {
+  Shell::new()
+    .cmd("nix-shell")
+    .spawn()
 }
 
 pub fn docker_up() -> Result<ExitStatus, Error> {
@@ -31,13 +66,10 @@ pub fn docker_up() -> Result<ExitStatus, Error> {
 
   args.extend_from_slice(&["up", "--no-recreate", "-d"]);
 
-  let status = Command::new("docker-compose").args(&args).spawn()?.wait()?;
-
-  if !(status.code().unwrap() % 255 == 0) {
-    bail!("docker up failed");
-  } else {
-    Ok(status)
-  }
+  Shell::new()
+    .cmd("docker-compose")
+    .args(args)
+    .spawn()
 }
 
 pub fn docker_down() -> Result<ExitStatus, Error> {
@@ -50,13 +82,10 @@ pub fn docker_down() -> Result<ExitStatus, Error> {
 
   args.extend_from_slice(&["down"]);
 
-  let status = Command::new("docker-compose").args(&args).spawn()?.wait()?;
-
-  if !(status.code().unwrap() % 255 == 0) {
-    bail!("docker down failed");
-  } else {
-    Ok(status)
-  }
+  Shell::new()
+    .cmd("docker-compose")
+    .args(args)
+    .spawn()
 }
 
 pub fn docker_ps() -> Result<ExitStatus, Error> {
@@ -69,81 +98,73 @@ pub fn docker_ps() -> Result<ExitStatus, Error> {
 
   args.extend_from_slice(&["ps"]);
 
-  let status = Command::new("docker-compose").args(&args).spawn()?.wait()?;
-
-  if !(status.code().unwrap() % 255 == 0) {
-    bail!("docker ps failed");
-  } else {
-    Ok(status)
-  }
+  Shell::new()
+    .cmd("docker-compose")
+    .args(args)
+    .spawn()
 }
 
 pub fn forego_start() -> Result<ExitStatus, Error> {
-  let args = ["--run", "bundle && yarn && bundle exec rails db:create db:migrate && pnforego start"];
+  let args = vec!["--run", "bundle && yarn && bundle exec rails db:create db:migrate && pnforego start"];
 
-  let status = Command::new("nix-shell").args(&args).spawn()?.wait()?;
-  if !(status.code().unwrap() % 255 == 0) {
-    bail!("forego start failed")
-  } else {
-    Ok(status)
-  }
+  Shell::new()
+    .cmd("nix-shell")
+    .args(args)
+    .spawn()
 }
 
 pub fn rails_migrate() -> Result<ExitStatus, Error> {
-  let args = ["--run", "bundle && yarn && bundle exec rails db:create db:migrate"];
+  let args = vec!["--run", "bundle && yarn && bundle exec rails db:create db:migrate"];
 
-  let status = Command::new("nix-shell").args(&args).spawn()?.wait()?;
-
-  if !(status.code().unwrap() % 255 == 0) {
-    bail!("migrate failed")
-  } else {
-    Ok(status)
-  }
+  Shell::new()
+    .cmd("nix-shell")
+    .args(args)
+    .spawn()
 }
 
 pub fn rails_bootstrap() -> Result<ExitStatus, Error> {
-  let args = ["--run", "bundle && yarn && RAILS_ENV=development bundle exec cucumber bootstrap"];
+  let args = vec!["--run", "bundle && yarn && RAILS_ENV=development bundle exec cucumber bootstrap"];
 
-  let status = Command::new("nix-shell").args(&args).spawn()?.wait()?;
-
-  if !(status.code().unwrap() % 255 == 0) {
-    bail!("bootstrap failed")
-  } else {
-    Ok(status)
-  }
+  Shell::new()
+    .cmd("nix-shell")
+    .args(args)
+    .spawn()
 }
 
 pub fn rails_anonymize() -> Result<ExitStatus, Error> {
-  let args = ["--run", "bundle && yarn && bundle exec rails db:anonymize"];
+  let args = vec!["--run", "bundle && yarn && bundle exec rails db:anonymize"];
 
-  let status = Command::new("nix-shell").args(&args).spawn()?.wait()?;
-
-  if !(status.code().unwrap() % 255 == 0) {
-    bail!("anonymize failed")
-  } else {
-    Ok(status)
-  }
+  Shell::new()
+    .cmd("nix-shell")
+    .args(args)
+    .spawn()
 }
 
 pub fn ember_start() -> Result<ExitStatus, Error> {
-  let args = ["--run", "yarn && yarn exec ember server"];
+  let args = vec!["--run", "yarn && yarn exec ember server"];
 
-  let status = Command::new("nix-shell").args(&args).spawn()?.wait()?;
-
-  if !(status.code().unwrap() % 255 == 0) {
-    bail!("ember s failed")
-  } else {
-    Ok(status)
-  }
+  Shell::new()
+    .cmd("nix-shell")
+    .args(args)
+    .spawn()
 }
 
 pub fn npm_rebuild_deps() -> Result<ExitStatus, Error> {
-  let args = ["--run", "npm rebuild xxhash node-sass"];
+  let args = vec!["--run", "npm rebuild xxhash node-sass"];
 
-  let status = Command::new("nix-shell").args(&args).spawn()?.wait()?;
-  if !(status.code().unwrap() % 255 == 0) {
-    bail!("rebuilding node deps")
+  Shell::new()
+    .cmd("nix-shell")
+    .args(args)
+    .spawn()
+}
+
+pub fn pndev_setup() -> Result<(), Error> {
+  let path = format!("{}/pndev", git::pn_repos_path());
+
+  if Path::new(&path).exists() {
+    info!("pndev already cloned, if you want to update run git update in /DEV/PN/pndev");
+    Ok(())
   } else {
-    Ok(status)
+    git::clone("pndev")
   }
 }

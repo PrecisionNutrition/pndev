@@ -1,3 +1,14 @@
+#![warn(
+   clippy::all,
+   //clippy::restriction,
+   clippy::pedantic,
+   clippy::nursery,
+   //clippy::cargo,
+)]
+#![allow(
+  clippy::non_ascii_literal
+)]
+
 use structopt::StructOpt;
 use clap_verbosity_flag::Verbosity;
 
@@ -15,12 +26,17 @@ use self_update;
 // unix specific extensions for chmod
 use std::os::unix::fs::PermissionsExt;
 
+/// Check functions
 mod check;
+
+/// Shell functions
 mod shell;
+
+/// Git functions
 mod git;
 
-// available commands
 #[derive(StructOpt, Debug)]
+/// Available commands
 enum Command {
   #[structopt(name = "clone")]
   /// clone one or all the pn apps into ~/DEV/PN
@@ -30,6 +46,7 @@ enum Command {
     all: bool,
 
     #[structopt(name = "name")]
+    /// name of the repository
     name: Option<String>,
   },
 
@@ -79,11 +96,11 @@ struct Cli {
 }
 
 fn shell_command() -> Result<(), Error> {
-  check::check_all()?;
+  check::all()?;
 
   trace!("shell started ");
 
-  shell::nix_shell()?;
+  shell::nix()?;
 
   trace!("shell closed");
 
@@ -91,7 +108,7 @@ fn shell_command() -> Result<(), Error> {
 }
 
 fn start_command(docker_only: bool) -> Result<(), Error> {
-  check::check_all()?;
+  check::all()?;
 
   trace!("start command");
 
@@ -101,7 +118,6 @@ fn start_command(docker_only: bool) -> Result<(), Error> {
     info!("Starting only docker services");
     return Ok(());
   }
-
 
   if Path::new("Gemfile.lock").exists() {
     shell::forego_start()?;
@@ -117,7 +133,7 @@ fn start_command(docker_only: bool) -> Result<(), Error> {
 }
 
 fn stop_command() -> Result<(), Error> {
-  check::check_all()?;
+  check::all()?;
 
   trace!("stop command");
 
@@ -129,7 +145,7 @@ fn stop_command() -> Result<(), Error> {
 }
 
 fn ps_command() -> Result<(), Error> {
-  check::check_all()?;
+  check::all()?;
 
   trace!("ps command");
 
@@ -143,7 +159,7 @@ fn ps_command() -> Result<(), Error> {
 }
 
 fn prepare_command() -> Result<(), Error> {
-  check::check_all()?;
+  check::all()?;
 
   trace!("anonymize command");
   let mut path = home_dir().unwrap();
@@ -171,7 +187,7 @@ fn prepare_command() -> Result<(), Error> {
 }
 
 fn clone_command(name: Option<String>, all: bool) -> Result<(), Error> {
-  check::check_all()?;
+  check::all()?;
 
   trace!("clone command");
 
@@ -184,7 +200,7 @@ fn clone_command(name: Option<String>, all: bool) -> Result<(), Error> {
   ];
 
   if all {
-    for app in apps.iter() {
+    for &app in &apps {
       println!("Cloning {}", app);
       git::clone(app)?;
     }

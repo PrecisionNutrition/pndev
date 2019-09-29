@@ -10,9 +10,10 @@ use failure::{bail, Error};
 const APPS: [&str; 3] = ["git", "nix", "docker"];
 const HOSTNAME: &str = "es-dev.precisionnutrition.com";
 
-pub fn check_all() -> Result<(), Error> {
+/// Runs all checks
+pub fn all() -> Result<(), Error> {
   trace!("pn_doctor called");
-  for app in APPS.iter() {
+  for &app in &APPS {
     if !check_app_installed(app) {
       bail!("{} not installed, run pndev check for help", app);
     }
@@ -28,7 +29,7 @@ pub fn check_all() -> Result<(), Error> {
 pub fn doctor() -> Result<(), Error> {
   trace!("check_all called");
 
-  for app in APPS.iter() {
+  for &app in &APPS {
     if check_app_installed(app) {
       println!("{} {} installed", Green.paint("✓"), app);
     } else {
@@ -61,11 +62,7 @@ fn check_anonymize_creds() -> bool {
   let mut path = dirs::home_dir().unwrap();
   path.push(".pn_anonymize_creds");
 
-  if path.exists() {
-    true
-  } else {
-    false
-  }
+  path.exists()
 }
 
 fn check_app_installed(command: &str) -> bool {
@@ -73,17 +70,11 @@ fn check_app_installed(command: &str) -> bool {
     .args(&["--version"])
     .output();
 
-  match result {
-    Ok(_) => true,
-    Err(_) => false,
-  }
+  result.is_ok()
 }
 
 fn check_host() -> bool {
-  match lookup_host(HOSTNAME) {
-    Ok(_) => true,
-    Err(_) => false,
-  }
+  lookup_host(HOSTNAME).is_ok()
 }
 
 fn check_github() -> bool {

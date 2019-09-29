@@ -13,7 +13,7 @@ pub struct Shell<'a> {
 
 impl<'a> Shell<'a> {
   pub fn new() -> Self {
-    Default::default()
+    Shell::default()
   }
 
   pub fn cmd(&mut self, cmd: &str) -> &mut Self {
@@ -36,10 +36,10 @@ impl<'a> Shell<'a> {
 
     let status = Command::new(cmd).args(&self.args).spawn()?.wait()?;
 
-    if !(status.code().unwrap() % 255 == 0) {
-      bail!("docker up failed");
-    } else {
+    if status.code().unwrap() % 255 == 0 {
       Ok(status)
+    } else {
+      bail!("docker up failed");
     }
   }
 
@@ -64,7 +64,7 @@ impl Default for Shell<'_> {
   }
 }
 
-pub fn nix_shell() -> Result<ExitStatus, Error> {
+pub fn nix() -> Result<ExitStatus, Error> {
   Shell::new()
     .cmd("nix-shell")
     .spawn()

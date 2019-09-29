@@ -195,6 +195,12 @@ example
 cargo run -- check -vvvv
 ```
 
+### Use clippy
+
+```
+cargo clippy --all-targets --all-features -- -D warnings
+```
+
 ## Releasing
 * commit all changes and push
 * bump version in `Cargo.toml`

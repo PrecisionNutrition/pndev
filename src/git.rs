@@ -4,6 +4,7 @@ use std::process::{Command};
 use std::fs;
 use dirs::home_dir;
 
+/// Clones a github repo from the PN org
 pub fn clone(name: &str) -> Result<(), Error> {
   let dest = pn_repos_path();
   let app_path = format!("git@github.com:PrecisionNutrition/{}.git", name);
@@ -30,8 +31,9 @@ pub fn clone(name: &str) -> Result<(), Error> {
   }
 }
 
+/// Calculates path for local repo clones
 pub fn pn_repos_path() -> String {
   let mut home_path =  home_dir().unwrap();
   home_path.push("DEV/PN");
-  format!("{}", home_path.into_os_string().into_string().unwrap())
+  home_path.into_os_string().into_string().unwrap()
 }

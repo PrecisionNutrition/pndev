@@ -9,6 +9,7 @@ use std::process::{Command, ExitStatus};
 pub struct Shell<'a> {
     cmd: Option<String>,
     args: Vec<&'a str>,
+    error_mgs: &'a str,
 }
 
 impl<'a> Shell<'a> {
@@ -26,6 +27,11 @@ impl<'a> Shell<'a> {
         self
     }
 
+    pub fn error_mgs(&mut self, error_mgs: &'a str) -> &mut Self {
+        self.error_mgs = error_mgs;
+        self
+    }
+
     pub fn spawn(&mut self) -> Result<ExitStatus, Error> {
         Shell::check_setup()?;
 
@@ -39,7 +45,7 @@ impl<'a> Shell<'a> {
         if status.code().unwrap() % 255 == 0 {
             Ok(status)
         } else {
-            bail!("docker up failed");
+            bail!(self.error_mgs.to_owned());
         }
     }
 
@@ -60,6 +66,7 @@ impl Default for Shell<'_> {
         Self {
             cmd: None,
             args: vec![],
+            error_mgs: "Shell command failed",
         }
     }
 }
@@ -76,7 +83,11 @@ pub fn docker_up() -> Result<ExitStatus, Error> {
 
     args.extend_from_slice(&["up", "--no-recreate", "-d"]);
 
-    Shell::new().cmd("docker-compose").args(args).spawn()
+    Shell::new()
+        .cmd("docker-compose")
+        .args(args)
+        .error_mgs("Docker up failed")
+        .spawn()
 }
 
 pub fn docker_down() -> Result<ExitStatus, Error> {
@@ -87,7 +98,11 @@ pub fn docker_down() -> Result<ExitStatus, Error> {
 
     args.extend_from_slice(&["down"]);
 
-    Shell::new().cmd("docker-compose").args(args).spawn()
+    Shell::new()
+        .cmd("docker-compose")
+        .args(args)
+        .error_mgs("Docker down failed")
+        .spawn()
 }
 
 pub fn docker_ps() -> Result<ExitStatus, Error> {
@@ -98,7 +113,11 @@ pub fn docker_ps() -> Result<ExitStatus, Error> {
 
     args.extend_from_slice(&["ps"]);
 
-    Shell::new().cmd("docker-compose").args(args).spawn()
+    Shell::new()
+        .cmd("docker-compose")
+        .args(args)
+        .error_mgs("Docker ps failed")
+        .spawn()
 }
 
 pub fn forego_start() -> Result<ExitStatus, Error> {
@@ -107,7 +126,11 @@ pub fn forego_start() -> Result<ExitStatus, Error> {
         "bundle && yarn && bundle exec rails db:create db:migrate && pnforego start",
     ];
 
-    Shell::new().cmd("nix-shell").args(args).spawn()
+    Shell::new()
+        .cmd("nix-shell")
+        .args(args)
+        .error_mgs("Forego start failed")
+        .spawn()
 }
 
 pub fn rails_migrate() -> Result<ExitStatus, Error> {
@@ -116,7 +139,11 @@ pub fn rails_migrate() -> Result<ExitStatus, Error> {
         "bundle && yarn && bundle exec rails db:create db:migrate",
     ];
 
-    Shell::new().cmd("nix-shell").args(args).spawn()
+    Shell::new()
+        .cmd("nix-shell")
+        .args(args)
+        .error_mgs("Rails migrate failed")
+        .spawn()
 }
 
 pub fn rails_bootstrap() -> Result<ExitStatus, Error> {
@@ -125,13 +152,21 @@ pub fn rails_bootstrap() -> Result<ExitStatus, Error> {
         "bundle && yarn && RAILS_ENV=development bundle exec cucumber bootstrap",
     ];
 
-    Shell::new().cmd("nix-shell").args(args).spawn()
+    Shell::new()
+        .cmd("nix-shell")
+        .args(args)
+        .error_mgs("Bootstrap failed")
+        .spawn()
 }
 
 pub fn rails_anonymize() -> Result<ExitStatus, Error> {
     let args = vec!["--run", "bundle && yarn && bundle exec rails db:anonymize"];
 
-    Shell::new().cmd("nix-shell").args(args).spawn()
+    Shell::new()
+        .cmd("nix-shell")
+        .args(args)
+        .error_mgs("Anonyimize failed")
+        .spawn()
 }
 
 pub fn ember_start() -> Result<ExitStatus, Error> {

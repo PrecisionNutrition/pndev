@@ -12,6 +12,9 @@ use dirs::home_dir;
 
 use self_update;
 
+// unix specific extensions for chmod
+use std::os::unix::fs::PermissionsExt;
+
 mod check;
 mod shell;
 mod git;
@@ -232,5 +235,13 @@ fn update() -> Result<(), Error> {
         .build()?
         .update()?;
     println!("Update status: `{}`!", status.version());
+
+    let exe_path = std::env::current_exe().expect("not executable");
+
+    let metadata = std::fs::metadata(&exe_path)?;
+    let mut perms = metadata.permissions();
+    perms.set_mode(0o755);
+    std::fs::set_permissions(&exe_path, perms)?;
+
     Ok(())
 }

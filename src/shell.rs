@@ -136,3 +136,14 @@ pub fn ember_start() -> Result<ExitStatus, Error> {
     Ok(status)
   }
 }
+
+pub fn npm_rebuild_deps() -> Result<ExitStatus, Error> {
+  let args = ["--run", "npm rebuild xxhash node-sass"];
+
+  let status = Command::new("nix-shell").args(&args).spawn()?.wait()?;
+  if !(status.code().unwrap() % 255 == 0) {
+    bail!("rebuilding node deps")
+  } else {
+    Ok(status)
+  }
+}

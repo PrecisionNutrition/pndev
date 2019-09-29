@@ -151,6 +151,8 @@ fn prepare_command() -> Result<(), Error> {
   shell::docker_up()?;
 
   if Path::new("Gemfile.lock").exists() {
+    shell::npm_rebuild_deps()?;
+
     shell::rails_migrate()?;
 
     shell::rails_anonymize()?;

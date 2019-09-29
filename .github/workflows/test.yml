@@ -1,0 +1,30 @@
+on:
+  push:
+    branch:
+     - '*'
+
+name: test
+
+jobs:
+  test:
+    name: Publish for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            artifact_name: pndev
+            asset_name: pndev-linux-amd64
+          - os: macos-latest
+            artifact_name: pndev
+            asset_name: pndev-x86_64-apple-darwin
+    steps:
+    - uses: hecrj/setup-rust-action@v1
+      with:
+        rust-version: stable
+    - uses: actions/checkout@v1
+    - name: Build
+      run: cargo build --release --locked
+    - name: clippy
+      run: cargo clippy --all-targets --all-features -- -D warnings

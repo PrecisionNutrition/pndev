@@ -13,19 +13,24 @@ from the [releases](https://github.com/PrecisionNutrition/pndev/releases) page.
 
 ## Usage
 
+For a detailed description of the usage see our private wiki
+https://www.notion.so/precisionnutrition/Set-Up-Your-Local-Dev-Environment-bb65105ca8dc475191864d53bfca192f
+
 ### Help
 ```
 pndev help
 
 # prints
 
-    clone      clone one or all the pn apps
+    clone      clone one or all the pn apps into ~/DEV/PN
     doctor     diagnose system setup for pndev
     help       Prints this message or the help of the given subcommand(s)
     prepare    run optional setup steps (i.e db setup)
+    ps         print docker status
     shell      start a nix-shell in the current application
-    start      start ember s or docker + rails - depends on application
+    start      start docker and ember s or rails - depends on application
     stop       stop docker
+    update     attempts to update pndev itself to the latest released version
 
 ```
 
@@ -67,6 +72,7 @@ curl https://nixos.org/nix/install | sh
 
 nix-channel --add https://nixos.org/channels/nixos-19.03 nixos
 nix-channel --add https://nixos.org/channels/nixos-19.03 nixpkgs
+nix-channel --update
 ```
 #### Configuring es-dev domain
 

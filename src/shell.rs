@@ -27,6 +27,8 @@ impl<'a> Shell<'a> {
   }
 
   pub fn spawn(&mut self) -> Result<ExitStatus, Error> {
+    Shell::check_setup()?;
+
     let cmd = match &self.cmd {
       Some(cmd) => cmd,
       None => bail!("missing cmd"),
@@ -38,6 +40,17 @@ impl<'a> Shell<'a> {
       bail!("docker up failed");
     } else {
       Ok(status)
+    }
+  }
+
+  pub fn check_setup() -> Result<(), Error> {
+    let path = format!("{}/pndev", git::pn_repos_path());
+
+    if Path::new(&path).exists() {
+      info!("pndev already cloned, if you want to update run git update in /DEV/PN/pndev");
+      Ok(())
+    } else {
+      git::clone("pndev")
     }
   }
 }
@@ -58,7 +71,6 @@ pub fn nix_shell() -> Result<ExitStatus, Error> {
 }
 
 pub fn docker_up() -> Result<ExitStatus, Error> {
-  pndev_setup()?;
   let mut args = vec!["-f"];
 
   let pndev_path = format!("{}/pndev/catalog/docker-compose.yml", git::pn_repos_path());
@@ -73,8 +85,6 @@ pub fn docker_up() -> Result<ExitStatus, Error> {
 }
 
 pub fn docker_down() -> Result<ExitStatus, Error> {
-  pndev_setup()?;
-
   let mut args = vec!["-f"];
 
   let pndev_path = format!("{}/pndev/catalog/docker-compose.yml", git::pn_repos_path());
@@ -89,8 +99,6 @@ pub fn docker_down() -> Result<ExitStatus, Error> {
 }
 
 pub fn docker_ps() -> Result<ExitStatus, Error> {
-  pndev_setup()?;
-
   let mut args = vec!["-f"];
 
   let pndev_path = format!("{}/pndev/catalog/docker-compose.yml", git::pn_repos_path());
@@ -156,15 +164,4 @@ pub fn npm_rebuild_deps() -> Result<ExitStatus, Error> {
     .cmd("nix-shell")
     .args(args)
     .spawn()
-}
-
-pub fn pndev_setup() -> Result<(), Error> {
-  let path = format!("{}/pndev", git::pn_repos_path());
-
-  if Path::new(&path).exists() {
-    info!("pndev already cloned, if you want to update run git update in /DEV/PN/pndev");
-    Ok(())
-  } else {
-    git::clone("pndev")
-  }
 }

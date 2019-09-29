@@ -107,6 +107,8 @@ fn start_command(docker_only: bool) -> Result<(), Error> {
     shell::forego_start()?;
   } else if Path::new("yarn.lock").exists() {
     shell::ember_start()?;
+  } else {
+    bail!("No bundle or ruby config found")
   }
 
   trace!("start command done");

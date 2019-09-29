@@ -238,6 +238,7 @@ fn main() -> Result<(), ExitFailure> {
 }
 
 // see https://github.com/jaemk/self_update#usage
+/// Performs a self update of pndev itself
 fn update() -> Result<(), Error> {
     let token = std::env::var("DOWNLOAD_AUTH_TOKEN")
         .expect("DOWNLOAD_AUTH_TOKEN needs to the best in your environment");

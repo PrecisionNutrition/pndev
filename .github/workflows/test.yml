@@ -24,7 +24,11 @@ jobs:
       with:
         rust-version: stable
     - uses: actions/checkout@v1
+    - name: setup
+      run: rustup component add clippy rustfmt
     - name: Build
       run: cargo build --release --locked
     - name: clippy
       run: cargo clippy --all-targets --all-features -- -D warnings
+    - name: fmt
+      run: cargo fmt --all -- --check

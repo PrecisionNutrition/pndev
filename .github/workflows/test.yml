@@ -15,7 +15,10 @@ jobs:
         include:
           - os: ubuntu-latest
             artifact_name: pndev
-            asset_name: pndev-linux-amd64
+            asset_name: pndev-x86_64-linux
+          - os: ubuntu-14.04
+            artifact_name: pndev
+            asset_name: pndev-x86_64-ubuntu-14
           - os: macos-latest
             artifact_name: pndev
             asset_name: pndev-x86_64-apple-darwin

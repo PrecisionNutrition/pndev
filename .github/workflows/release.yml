@@ -12,14 +12,14 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, ubuntu-14.04, macos-latest]
+        os: [ubuntu-latest, ubuntu-16.04, macos-latest]
         include:
           - os: ubuntu-latest
             artifact_name: pndev
             asset_name: pndev-linux-amd64
-          - os: ubuntu-14.04
+          - os: ubuntu-16.04
             artifact_name: pndev
-            asset_name: pndev-x86_64-ubuntu-14
+            asset_name: pndev-x86_64-ubuntu-16
           - os: macos-latest
             artifact_name: pndev
             asset_name: pndev-x86_64-apple-darwin

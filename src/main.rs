@@ -98,6 +98,8 @@ fn shell_command() -> Result<(), Error> {
 
     trace!("shell started ");
 
+    shell::docker_up()?;
+
     shell::nix()?;
 
     trace!("shell closed");

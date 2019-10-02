@@ -15,12 +15,12 @@ pub fn all() -> Result<(), Error> {
     trace!("pn_doctor called");
     for &app in &APPS {
         if !check_app_installed(app) {
-            bail!("{} not installed, run pndev check for help", app);
+            bail!("{} not installed, run pndev doctor for help", app);
         }
     }
 
     if !check_host() {
-        bail!("es-dev not configured, run pndev check for help");
+        bail!("es-dev not configured, run pndev doctor for help");
     }
 
     Ok(())

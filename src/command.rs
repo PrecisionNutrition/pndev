@@ -146,10 +146,10 @@ impl Command {
             info!("Starting only docker services");
         } else if Path::new("Gemfile.lock").exists() {
             shell::forego_start()?;
-        } else if Path::new("yarn.lock").exists() {
+        } else if Path::new("ember-cli-build.js").exists() {
             shell::ember_start()?;
         } else {
-            bail!("No bundle or ruby config found")
+            bail!("No Ruby or Ember app found")
         }
 
         Ok(self)

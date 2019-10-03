@@ -12,12 +12,14 @@ use crate::check;
 use crate::git;
 use crate::shell;
 
-const APPS: [&str; 5] = [
+const APPS: &[&str] = &[
     "eternal-sledgehammer",
     "es-student",
     "fitpro",
     "es-certification",
     "payment-next",
+    "courier",
+    "owners-manual",
 ];
 
 #[derive(Debug)]
@@ -197,7 +199,7 @@ impl Command {
 
     fn _clone(&self) -> Result<&Self, Error> {
         if self.all {
-            for &app in &APPS {
+            for &app in APPS {
                 println!("Cloning {}", app);
                 git::clone(app)?;
             }

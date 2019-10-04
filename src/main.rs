@@ -30,6 +30,8 @@ use command::Command;
 /// Self update
 mod update;
 
+mod config;
+
 #[derive(StructOpt, Debug)]
 /// Available commands
 enum CliCommand {

@@ -11,6 +11,24 @@ from the [releases](https://github.com/PrecisionNutrition/pndev/releases) page.
 
 * make it executable `sudo chmod +x /usr/local/bin/pndev`
 
+## Configure
+
+If you would like to customize the installation path for the repositories you can create a
+`.pndev_config.toml` file in your home directory;
+
+```
+# run
+pndev doctor
+# this will create a ~/.pndev_config.toml for you to edit if you don't have one
+```
+
+### Config file format
+
+```
+install_path = 'DEV/PN'
+```
+
+
 ## Usage
 
 For a detailed description of the usage see our private wiki

@@ -1,3 +1,4 @@
+use crate::config;
 use crate::git;
 use failure::bail;
 use failure::Error;
@@ -50,7 +51,7 @@ impl<'a> Shell<'a> {
     }
 
     pub fn check_setup() -> Result<(), Error> {
-        let path = format!("{}/pndev", git::pn_repos_path());
+        let path = format!("{}/pndev", config::Config::new().repo_path());
 
         if Path::new(&path).exists() {
             info!("pndev already cloned, if you want to update run git update in /DEV/PN/pndev");
@@ -78,7 +79,10 @@ pub fn nix() -> Result<ExitStatus, Error> {
 pub fn docker_up() -> Result<ExitStatus, Error> {
     let mut args = vec!["-f"];
 
-    let pndev_path = format!("{}/pndev/catalog/docker-compose.yml", git::pn_repos_path());
+    let pndev_path = format!(
+        "{}/pndev/catalog/docker-compose.yml",
+        config::Config::new().repo_path()
+    );
     args.push(&pndev_path);
 
     args.extend_from_slice(&["up", "--no-recreate", "-d"]);
@@ -93,7 +97,10 @@ pub fn docker_up() -> Result<ExitStatus, Error> {
 pub fn docker_down() -> Result<ExitStatus, Error> {
     let mut args = vec!["-f"];
 
-    let pndev_path = format!("{}/pndev/catalog/docker-compose.yml", git::pn_repos_path());
+    let pndev_path = format!(
+        "{}/pndev/catalog/docker-compose.yml",
+        config::Config::new().repo_path()
+    );
     args.push(&pndev_path);
 
     args.extend_from_slice(&["down"]);
@@ -108,7 +115,10 @@ pub fn docker_down() -> Result<ExitStatus, Error> {
 pub fn docker_ps() -> Result<ExitStatus, Error> {
     let mut args = vec!["-f"];
 
-    let pndev_path = format!("{}/pndev/catalog/docker-compose.yml", git::pn_repos_path());
+    let pndev_path = format!(
+        "{}/pndev/catalog/docker-compose.yml",
+        config::Config::new().repo_path()
+    );
     args.push(&pndev_path);
 
     args.extend_from_slice(&["ps"]);

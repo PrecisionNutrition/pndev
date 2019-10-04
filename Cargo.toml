@@ -30,6 +30,13 @@ sys-info = "0.5.8"
 # dirs
 dirs = "2.0"
 
-
 self_update = "0.7"
+
+confy = "0.3.1"
+
+error-chain = "0.12.1"
+
+[dependencies.serde]
+version = "1.0"
+features = ["derive"]
 

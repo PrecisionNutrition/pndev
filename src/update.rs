@@ -1,6 +1,8 @@
 use failure::Error;
 use self_update;
 
+use crate::git;
+use crate::shell;
 // unix specific extensions for chmod
 use std::os::unix::fs::PermissionsExt;
 
@@ -24,6 +26,12 @@ pub fn run() -> Result<(), Error> {
     let mut perms = metadata.permissions();
     perms.set_mode(0o755);
     std::fs::set_permissions(&exe_path, perms)?;
+
+    // ensure pndev is cloned
+    shell::Shell::check_setup()?;
+
+    // pull new docker configs
+    git::update("pndev")?;
 
     Ok(())
 }

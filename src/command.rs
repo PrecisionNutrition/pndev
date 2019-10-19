@@ -81,6 +81,16 @@ impl Command {
         Ok(())
     }
 
+    pub fn rebuild() -> Result<(), Error> {
+        trace!("rebuild command");
+
+        Command::new().check().and_then(Command::_rebuild)?;
+
+        trace!("rebuild command done");
+
+        Ok(())
+    }
+
     pub fn prepare() -> Result<(), Error> {
         trace!("anonymize command");
 
@@ -166,6 +176,22 @@ impl Command {
         println!("Docker ps output:");
 
         shell::docker_ps()?;
+
+        Ok(self)
+    }
+
+    fn _rebuild(&self) -> Result<&Self, Error> {
+        // pull new docker configs
+        git::update("pndev")?;
+
+        // stop docker
+        shell::docker_down()?;
+
+        // rebuild container
+        shell::docker_rebuild()?;
+
+        // ensure new containers are used
+        shell::docker_up_recreate()?;
 
         Ok(self)
     }

@@ -77,6 +77,14 @@ pub fn nix() -> Result<ExitStatus, Error> {
 }
 
 pub fn docker_up() -> Result<ExitStatus, Error> {
+    _docker_up(false)
+}
+
+pub fn docker_up_recreate() -> Result<ExitStatus, Error> {
+    _docker_up(true)
+}
+
+fn _docker_up(force_recreate: bool) -> Result<ExitStatus, Error> {
     let mut args = vec!["-f"];
 
     let pndev_path = format!(
@@ -85,7 +93,13 @@ pub fn docker_up() -> Result<ExitStatus, Error> {
     );
     args.push(&pndev_path);
 
-    args.extend_from_slice(&["up", "--no-recreate", "-d"]);
+    args.extend_from_slice(&["up", "-d"]);
+
+    if force_recreate {
+        args.push("--force-recreate");
+    } else {
+        args.push("--no-recreate");
+    }
 
     Shell::new()
         .cmd("docker-compose")
@@ -122,6 +136,24 @@ pub fn docker_ps() -> Result<ExitStatus, Error> {
     args.push(&pndev_path);
 
     args.extend_from_slice(&["ps"]);
+
+    Shell::new()
+        .cmd("docker-compose")
+        .args(args)
+        .error_mgs("Docker ps failed")
+        .spawn()
+}
+
+pub fn docker_rebuild() -> Result<ExitStatus, Error> {
+    let mut args = vec!["-f"];
+
+    let pndev_path = format!(
+        "{}/pndev/catalog/docker-compose.yml",
+        config::Config::new().repo_path()
+    );
+    args.push(&pndev_path);
+
+    args.extend_from_slice(&["build", "--no-cache"]);
 
     Shell::new()
         .cmd("docker-compose")

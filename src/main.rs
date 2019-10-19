@@ -71,6 +71,10 @@ enum CliCommand {
     /// stop docker
     Stop,
 
+    #[structopt(name = "rebuild")]
+    /// rebuild docker containers after downloading new config
+    Rebuild,
+
     #[structopt(name = "ps")]
     /// print docker status
     Ps,
@@ -105,6 +109,7 @@ fn main() -> Result<(), ExitFailure> {
         CliCommand::Start { docker } => Command::start(docker),
         CliCommand::Stop => Command::stop(),
         CliCommand::Ps => Command::ps(),
+        CliCommand::Rebuild => Command::rebuild(),
         CliCommand::Doctor => check::doctor(),
         CliCommand::Clone { name, all } => Command::clone(name, all),
         CliCommand::Update => update::run(),

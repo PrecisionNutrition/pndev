@@ -45,6 +45,7 @@ pndev help
     help       Prints this message or the help of the given subcommand(s)
     prepare    run optional setup steps (i.e db setup)
     ps         print docker status
+    rebuild    rebuild docker containers after downloading new config
     shell      start a nix-shell in the current application
     start      start docker and ember s or rails - depends on application
     stop       stop docker

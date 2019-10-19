@@ -1007,7 +1007,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "pndev"
-version = "0.1.17"
+version = "0.1.18"
 dependencies = [
  "ansi_term 0.12.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "clap-log-flag 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",

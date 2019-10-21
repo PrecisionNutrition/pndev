@@ -158,7 +158,7 @@ pub fn docker_rebuild() -> Result<ExitStatus, Error> {
     Shell::new()
         .cmd("docker-compose")
         .args(args)
-        .error_mgs("Docker ps failed")
+        .error_mgs("Docker rebuild failed")
         .spawn()
 }
 

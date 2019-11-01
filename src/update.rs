@@ -12,7 +12,6 @@ pub fn run() -> Result<(), Error> {
     let status = self_update::backends::github::Update::configure()
         .repo_owner("PrecisionNutrition")
         .repo_name("pndev")
-        .bin_name("pndev-linux-amd64")
         .show_download_progress(true)
         .current_version(self_update::cargo_crate_version!())
         .build()?

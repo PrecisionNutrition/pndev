@@ -43,7 +43,9 @@ impl<'a> Shell<'a> {
 
         let status = Command::new(cmd).args(&self.args).spawn()?.wait()?;
 
-        if status.code().unwrap() % 255 == 0 {
+        let code = status.code().unwrap();
+
+        if code % 255 == 0 || code % 130 == 0 {
             Ok(status)
         } else {
             bail!(self.error_msg.to_owned());

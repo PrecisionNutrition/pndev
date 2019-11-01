@@ -75,6 +75,10 @@ enum CliCommand {
     /// rebuild docker containers after downloading new config
     Rebuild,
 
+    #[structopt(name = "reset")]
+    /// Nukes the nix-shell config (use when ruby/node version changes)
+    Reset,
+
     #[structopt(name = "ps")]
     /// print docker status
     Ps,
@@ -110,6 +114,7 @@ fn main() -> Result<(), ExitFailure> {
         CliCommand::Stop => Command::stop(),
         CliCommand::Ps => Command::ps(),
         CliCommand::Rebuild => Command::rebuild(),
+        CliCommand::Reset => Command::reset(),
         CliCommand::Doctor => check::doctor(),
         CliCommand::Clone { name, all } => Command::clone(name, all),
         CliCommand::Update => update::run(),

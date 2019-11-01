@@ -91,6 +91,16 @@ impl Command {
         Ok(())
     }
 
+    pub fn reset() -> Result<(), Error> {
+        trace!("reset command");
+
+        Command::new().check().and_then(Command::_reset)?;
+
+        trace!("reset command done");
+
+        Ok(())
+    }
+
     pub fn prepare() -> Result<(), Error> {
         trace!("anonymize command");
 
@@ -192,6 +202,12 @@ impl Command {
 
         // ensure new containers are used
         shell::docker_up_recreate()?;
+
+        Ok(self)
+    }
+
+    fn _reset(&self) -> Result<&Self, Error> {
+        shell::reset()?;
 
         Ok(self)
     }

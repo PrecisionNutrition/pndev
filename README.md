@@ -46,6 +46,7 @@ pndev help
     prepare    run optional setup steps (i.e db setup)
     ps         print docker status
     rebuild    rebuild docker containers after downloading new config
+    reset      nuke nix gems and node stuff (to be used on ruby/node updates)
     shell      start a nix-shell in the current application
     start      start docker and ember s or rails - depends on application
     stop       stop docker

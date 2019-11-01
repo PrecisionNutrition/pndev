@@ -222,3 +222,13 @@ pub fn npm_rebuild_deps() -> Result<ExitStatus, Error> {
 
     Shell::new().cmd("nix-shell").args(args).spawn()
 }
+
+pub fn reset() -> Result<ExitStatus, Error> {
+    let args2 = vec!["-rf", ".nix-gems", "vendor/cache", "node_modules", ".nix-node"];
+
+    Shell::new().cmd("rm").args(args2).spawn()?;
+
+    let args = vec!["--run", "npm rebuild xxhash node-sass"];
+
+    Shell::new().cmd("nix-shell").args(args).spawn()
+}

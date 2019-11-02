@@ -229,7 +229,13 @@ pub fn npm_rebuild_deps() -> Result<ExitStatus, Error> {
 }
 
 pub fn reset() -> Result<ExitStatus, Error> {
-    let args2 = vec!["-rf", ".nix-gems", "vendor/cache", "node_modules", ".nix-node"];
+    let args2 = vec![
+        "-rf",
+        ".nix-gems",
+        "vendor/cache",
+        "node_modules",
+        ".nix-node",
+    ];
 
     trace!("removing gems and node cache");
 

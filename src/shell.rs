@@ -3,6 +3,7 @@ use crate::git;
 use failure::bail;
 use failure::Error;
 use log::info;
+use log::trace;
 use std::path::Path;
 use std::process::{Command, ExitStatus};
 
@@ -42,6 +43,8 @@ impl<'a> Shell<'a> {
         };
 
         let status = Command::new(cmd).args(&self.args).spawn()?.wait()?;
+
+        trace!("command {:?} executed with args {:?}", cmd, &self.args);
 
         let code = status.code().unwrap();
 
@@ -228,9 +231,7 @@ pub fn npm_rebuild_deps() -> Result<ExitStatus, Error> {
 pub fn reset() -> Result<ExitStatus, Error> {
     let args2 = vec!["-rf", ".nix-gems", "vendor/cache", "node_modules", ".nix-node"];
 
-    Shell::new().cmd("rm").args(args2).spawn()?;
+    trace!("removing gems and node cache");
 
-    let args = vec!["--run", "npm rebuild xxhash node-sass"];
-
-    Shell::new().cmd("nix-shell").args(args).spawn()
+    Shell::new().cmd("rm").args(args2).spawn()
 }

@@ -207,6 +207,7 @@ impl Command {
     }
 
     fn _reset(&self) -> Result<&Self, Error> {
+        trace!("calling _reset and passing to shell");
         shell::reset()?;
 
         Ok(self)

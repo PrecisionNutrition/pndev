@@ -39,10 +39,7 @@ impl Command {
     }
 
     pub fn shell() -> Result<(), Error> {
-        Self::new()
-            .check()
-            .and_then(Command::up)
-            .and_then(Command::_nix)?;
+        Self::new().check()?.up()?._nix()?;
 
         Ok(())
     }
@@ -52,9 +49,9 @@ impl Command {
 
         Command::new()
             .docker_only(docker_only)
-            .check()
-            .and_then(Command::up)
-            .and_then(Command::_start)?;
+            .check()?
+            .up()?
+            ._start()?;
 
         trace!("start command done");
 
@@ -64,7 +61,7 @@ impl Command {
     pub fn stop() -> Result<(), Error> {
         trace!("stop command");
 
-        Command::new().check().and_then(Command::_stop)?;
+        Command::new().check()?._stop()?;
 
         trace!("stop command done");
 
@@ -74,7 +71,7 @@ impl Command {
     pub fn ps() -> Result<(), Error> {
         trace!("ps command");
 
-        Command::new().check().and_then(Command::_ps)?;
+        Command::new().check()?._ps()?;
 
         trace!("ps command done");
 
@@ -84,7 +81,7 @@ impl Command {
     pub fn rebuild() -> Result<(), Error> {
         trace!("rebuild command");
 
-        Command::new().check().and_then(Command::_rebuild)?;
+        Command::new().check()?._rebuild()?;
 
         trace!("rebuild command done");
 
@@ -94,7 +91,7 @@ impl Command {
     pub fn reset() -> Result<(), Error> {
         trace!("reset command");
 
-        Command::new().check().and_then(Command::_reset)?;
+        Command::new().check()?._reset()?;
 
         trace!("reset command done");
 
@@ -104,11 +101,7 @@ impl Command {
     pub fn prepare() -> Result<(), Error> {
         trace!("anonymize command");
 
-        Command::new()
-            .check()
-            .and_then(Command::up)
-            .and_then(Command::_has_creds)
-            .and_then(Command::_prepare)?;
+        Command::new().check()?.up()?._has_creds()?._prepare()?;
 
         Ok(())
     }
@@ -116,12 +109,7 @@ impl Command {
     pub fn clone(name: Option<String>, all: bool) -> Result<(), Error> {
         trace!("clone command");
 
-        Command::new()
-            .name(name)
-            .all(all)
-            .check()
-            .and_then(Command::up)
-            .and_then(Command::_clone)?;
+        Command::new().name(name).all(all).check()?.up()?._clone()?;
 
         info!("Clone completed");
 

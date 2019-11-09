@@ -9,7 +9,7 @@ pub fn clone(name: &str) -> Result<(), Error> {
     let dest = config::Config::new().repo_path();
     let app_path = format!("git@github.com:PrecisionNutrition/{}.git", name);
     let dest_path = format!("{}/{}", dest, name);
-    let args = ["clone", &app_path, &dest_path];
+    let args = ["clone", "--recurse-submodules", &app_path, &dest_path];
 
     fs::create_dir_all(dest)?;
 

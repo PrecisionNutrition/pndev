@@ -107,6 +107,8 @@ fn main() -> Result<(), ExitFailure> {
     warn!("LogLevel Warn");
     info!("LogLevel Info");
 
+    config::Config::new();
+
     let command_result = match args.command {
         CliCommand::Prepare => Command::prepare(),
         CliCommand::Shell => Command::shell(),

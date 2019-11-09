@@ -17,13 +17,14 @@ impl ::std::default::Default for Config {
     }
 }
 
-const CONFIG_FILE_NAME: &str = ".pndev_config";
+// Linux:   /home/alice/.config/pndev/pndev.toml
+// macOS:   /Users/Alice/Library/Preferences/rs.pndev.pndev/pndev.toml
+const CONFIG_FILE_NAME: &str = "pndev";
 
 impl Config {
     pub fn new() -> Self {
-        let path = format!("{}/{}", Self::home_path_str(), CONFIG_FILE_NAME);
-        info!("Loading config from {}.toml", path);
-        let cfg: Config = confy::load(&path).expect("Config load/write failed");
+        info!("Loading/generating config file");
+        let cfg: Config = confy::load(CONFIG_FILE_NAME).expect("Config load/write failed");
         cfg
     }
 

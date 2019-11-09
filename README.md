@@ -13,18 +13,28 @@ from the [releases](https://github.com/PrecisionNutrition/pndev/releases) page.
 
 ## Configure
 
-If you would like to customize the installation path for the repositories you can create a
-`.pndev_config.toml` file in your home directory;
+To customize the cloning path for the PN repositories you edit or create modify the `pndev` config file.
+
+The location of this file depends on your operating system.
+
+    // Linux:   /home/alice/.config/pndev/pndev.toml
+    // macOS:   /Users/Alice/Library/Preferences/rs.pndev.pndev/pndev.toml
+
+if this is your first time using `pndev` you can run `pndev doctor` and the config file will be generated
 
 ```
 # run
 pndev doctor
-# this will create a ~/.pndev_config.toml for you to edit if you don't have one
+
+# edit the generated config file
+# Linux:   /home/alice/.config/pndev/pndev.toml
+# macOS:   /Users/Alice/Library/Preferences/rs.pndev.pndev/pndev.toml
 ```
 
 ### Config file format
 
 ```
+# install path is relative to your home directory, do not use trailing slashes
 install_path = 'DEV/PN'
 ```
 

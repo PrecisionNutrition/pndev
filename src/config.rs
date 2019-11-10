@@ -24,6 +24,7 @@ impl Config {
         let path = format!("{}/{}", Self::home_path_str(), CONFIG_FILE_NAME);
         info!("Loading config from {}.toml", path);
         let cfg: Config = confy::load(&path).expect("Config load/write failed");
+
         cfg
     }
 

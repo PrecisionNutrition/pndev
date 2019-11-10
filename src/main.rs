@@ -35,6 +35,10 @@ mod config;
 #[derive(StructOpt, Debug)]
 /// Available commands
 enum CliCommand {
+    #[structopt(name = "doctor")]
+    /// diagnose system setup for pndev
+    Doctor,
+
     #[structopt(name = "clone")]
     /// clone one or all the pn apps into ~/DEV/PN
     Clone {
@@ -47,17 +51,13 @@ enum CliCommand {
         name: Option<String>,
     },
 
-    #[structopt(name = "doctor")]
-    /// diagnose system setup for pndev
-    Doctor,
-
     #[structopt(name = "prepare")]
-    /// run optional setup steps (i.e db setup)
-    Prepare,
-
-    #[structopt(name = "shell")]
-    /// start a nix-shell in the current application
-    Shell,
+    /// prepares the db for eternal-sledgehammer
+    Prepare {
+        #[structopt(short = "q", long = "quick")]
+        /// Do not use a remote snapshot, just bootstrap, no program data will be restored
+        quick: bool,
+    },
 
     #[structopt(name = "start")]
     /// start docker and ember s or rails - depends on application
@@ -71,21 +71,25 @@ enum CliCommand {
     /// stop docker
     Stop,
 
-    #[structopt(name = "rebuild")]
-    /// rebuild docker containers after downloading new config
-    Rebuild,
-
-    #[structopt(name = "reset")]
-    /// Nukes the nix-shell config (use when ruby/node version changes)
-    Reset,
+    #[structopt(name = "shell")]
+    /// start a nix-shell in the current application
+    Shell,
 
     #[structopt(name = "ps")]
     /// print docker status
     Ps,
 
+    #[structopt(name = "reset")]
+    /// Nukes the nix-shell config (use when ruby/node version changes)
+    Reset,
+
     #[structopt(name = "update")]
     /// attempts to update pndev itself to the latest released version
     Update,
+
+    #[structopt(name = "rebuild")]
+    /// rebuild docker containers after downloading new config
+    Rebuild,
 }
 
 // CLI definition
@@ -108,7 +112,7 @@ fn main() -> Result<(), ExitFailure> {
     info!("LogLevel Info");
 
     let command_result = match args.command {
-        CliCommand::Prepare => Command::prepare(),
+        CliCommand::Prepare { quick } => Command::prepare(quick),
         CliCommand::Shell => Command::shell(),
         CliCommand::Start { docker } => Command::start(docker),
         CliCommand::Stop => Command::stop(),

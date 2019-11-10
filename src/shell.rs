@@ -180,6 +180,19 @@ pub fn forego_start() -> Result<ExitStatus, Error> {
         .spawn()
 }
 
+pub fn rails_db_drop() -> Result<ExitStatus, Error> {
+    let args = vec![
+        "--run",
+        "bundle && yarn && bundle exec rails db:drop db:create",
+    ];
+
+    Shell::new()
+        .cmd("nix-shell")
+        .args(args)
+        .error_msg("Rails drop failed")
+        .spawn()
+}
+
 pub fn rails_migrate() -> Result<ExitStatus, Error> {
     let args = vec![
         "--run",

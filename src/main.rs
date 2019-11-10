@@ -68,8 +68,12 @@ enum CliCommand {
     },
 
     #[structopt(name = "stop")]
-    /// stop docker
+    /// DEPRECATED use down instead
     Stop,
+
+    #[structopt(name = "down")]
+    /// runs docker-compose down on pndev docker services
+    Down,
 
     #[structopt(name = "shell")]
     /// start a nix-shell in the current application
@@ -115,7 +119,11 @@ fn main() -> Result<(), ExitFailure> {
         CliCommand::Prepare { quick } => Command::prepare(quick),
         CliCommand::Shell => Command::shell(),
         CliCommand::Start { docker } => Command::start(docker),
-        CliCommand::Stop => Command::stop(),
+        CliCommand::Stop => {
+            println!("stop is DEPRECATED, use `pndev down` instead");
+            Command::down()
+        }
+        CliCommand::Down => Command::down(),
         CliCommand::Ps => Command::ps(),
         CliCommand::Rebuild => Command::rebuild(),
         CliCommand::Reset => Command::reset(),

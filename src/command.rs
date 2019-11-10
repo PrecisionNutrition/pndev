@@ -58,12 +58,12 @@ impl Command {
         Ok(())
     }
 
-    pub fn stop() -> Result<(), Error> {
-        trace!("stop command");
+    pub fn down() -> Result<(), Error> {
+        trace!("down command");
 
-        Command::new().check()?._stop()?;
+        Command::new().check()?._down()?;
 
-        trace!("stop command done");
+        trace!("down command done");
 
         Ok(())
     }
@@ -169,7 +169,7 @@ impl Command {
         Ok(self)
     }
 
-    fn _stop(&self) -> Result<&Self, Error> {
+    fn _down(&self) -> Result<&Self, Error> {
         shell::docker_down()?;
         Ok(self)
     }

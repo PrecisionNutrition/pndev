@@ -43,13 +43,13 @@ pndev help
     clone      clone one or all the pn apps into ~/DEV/PN
     doctor     diagnose system setup for pndev
     help       Prints this message or the help of the given subcommand(s)
-    prepare    run optional setup steps (i.e db setup)
+    prepare    run optional setup steps (i.e db setup) -- has a --quick argument
     ps         print docker status
     rebuild    rebuild docker containers after downloading new config
     reset      nuke nix gems and node stuff (to be used on ruby/node updates)
     shell      start a nix-shell in the current application
     start      start docker and ember s or rails - depends on application
-    stop       stop docker
+    down       stop docker services
     update     attempts to update pndev itself to the latest released version
 
 ```
@@ -235,3 +235,21 @@ cargo clippy --all-targets --all-features -- -D warnings
 * `git tag X.X.X`
 * `git push`
 * `git push --tags`
+
+
+## Known Issues
+
+### Killing `pndev start` does not restore command prompt
+
+See https://github.com/PrecisionNutrition/pndev/issues/10 for context
+
+TL;DR;
+
+When killing `pndev start` with CTRL+C press ENTER a couple of times once you see that ember/rails are done with their cleanup.
+
+NOTES:
+
+In order to cleanly return the user to the prompt after killing an ember or rails server we need to wait for the cleanup routines that those processes runs.
+Doing so requires adding signal handling and process killing to pndev
+
+We (@ghedamat) decided to punt on this for now.

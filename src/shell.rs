@@ -170,7 +170,7 @@ pub fn docker_rebuild() -> Result<ExitStatus, Error> {
 pub fn forego_start() -> Result<ExitStatus, Error> {
     let args = vec![
         "--run",
-        "bundle && yarn && bundle exec rails db:create db:migrate && pnforego start",
+        "bundle && yarn && bundle exec rails db:create db:migrate app:migrate_sequent && pnforego start",
     ];
 
     Shell::new()
@@ -196,7 +196,7 @@ pub fn rails_db_drop() -> Result<ExitStatus, Error> {
 pub fn rails_migrate() -> Result<ExitStatus, Error> {
     let args = vec![
         "--run",
-        "bundle && yarn && bundle exec rails db:create db:migrate",
+        "bundle && yarn && bundle exec rails db:create db:migrate app:migrate_sequent",
     ];
 
     Shell::new()

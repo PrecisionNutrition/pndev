@@ -220,6 +220,8 @@ impl Command {
         if Path::new("Gemfile.lock").exists() {
             shell::npm_rebuild_deps()?;
 
+
+            shell::rails_set_env()?;
             shell::rails_db_drop()?;
             shell::rails_migrate()?;
 

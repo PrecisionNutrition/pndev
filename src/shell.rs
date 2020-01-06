@@ -180,6 +180,19 @@ pub fn forego_start() -> Result<ExitStatus, Error> {
         .spawn()
 }
 
+pub fn rails_set_env() -> Result<ExitStatus, Error> {
+    let args = vec![
+        "--run",
+        "bundle && yarn && bundle exec rails db:environment:set RAILS_ENV=development",
+    ];
+
+    Shell::new()
+        .cmd("nix-shell")
+        .args(args)
+        .error_msg("Rails set db:environment failed")
+        .spawn()
+}
+
 pub fn rails_db_drop() -> Result<ExitStatus, Error> {
     let args = vec![
         "--run",
@@ -189,7 +202,7 @@ pub fn rails_db_drop() -> Result<ExitStatus, Error> {
     Shell::new()
         .cmd("nix-shell")
         .args(args)
-        .error_msg("Rails drop failed")
+        .error_msg("Rails db:drop failed")
         .spawn()
 }
 
@@ -202,7 +215,7 @@ pub fn rails_migrate() -> Result<ExitStatus, Error> {
     Shell::new()
         .cmd("nix-shell")
         .args(args)
-        .error_msg("Rails migrate failed")
+        .error_msg("Rails db:migrate failed")
         .spawn()
 }
 
@@ -215,7 +228,7 @@ pub fn rails_bootstrap() -> Result<ExitStatus, Error> {
     Shell::new()
         .cmd("nix-shell")
         .args(args)
-        .error_msg("Bootstrap failed")
+        .error_msg("DB Bootstrap failed")
         .spawn()
 }
 
@@ -225,7 +238,7 @@ pub fn rails_anonymize() -> Result<ExitStatus, Error> {
     Shell::new()
         .cmd("nix-shell")
         .args(args)
-        .error_msg("Anonyimize failed")
+        .error_msg("DB Anonyimize failed")
         .spawn()
 }
 

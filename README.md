@@ -253,3 +253,16 @@ In order to cleanly return the user to the prompt after killing an ember or rail
 Doing so requires adding signal handling and process killing to pndev
 
 We (@ghedamat) decided to punt on this for now.
+
+### Many `pndev` commands fail with `Error: No such file or directory (os error 2)`
+
+If you
+- Are on Linux
+- Have followed all of the requirement steps
+- pndev commands are failing with `Error: No such file or directory (os error 2)`
+
+You might not have the `docker-compose` package installed.
+
+Confirm by running `pndev -v -v -v -v start` for an appropriate amount of troubleshooting verbosity.
+
+This typically applies to Arch/Manjaro/any other distro that isn't Ubuntu.

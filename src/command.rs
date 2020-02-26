@@ -61,9 +61,7 @@ impl Command {
     pub fn up() -> Result<(), Error> {
         trace!("up command");
 
-        Self::new()
-            .check()?
-            ._up()?;
+        Self::new().check()?._up()?;
 
         trace!("up command done");
 
@@ -113,11 +111,7 @@ impl Command {
     pub fn prepare(quick: bool) -> Result<(), Error> {
         trace!("anonymize command");
 
-        Self::new()
-            .check()?
-            ._up()?
-            ._has_creds()?
-            ._prepare(quick)?;
+        Self::new().check()?._up()?._has_creds()?._prepare(quick)?;
 
         Ok(())
     }
@@ -231,7 +225,6 @@ impl Command {
     fn _prepare(&self, quick: bool) -> Result<&Self, Error> {
         if Path::new("Gemfile.lock").exists() {
             shell::npm_rebuild_deps()?;
-
 
             shell::rails_set_env()?;
             shell::rails_db_drop()?;

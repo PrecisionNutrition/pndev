@@ -42,7 +42,11 @@ impl<'a> Shell<'a> {
             None => bail!("missing cmd"),
         };
 
-        trace!("attempting to execute command {:?} with args {:?}", cmd, &self.args);
+        trace!(
+            "attempting to execute command {:?} with args {:?}",
+            cmd,
+            &self.args
+        );
 
         let status = Command::new(cmd).args(&self.args).spawn()?.wait()?;
 

@@ -9,6 +9,9 @@ use std::os::unix::fs::PermissionsExt;
 // see https://github.com/jaemk/self_update#usage
 /// Performs a self update of pndev itself
 pub fn run() -> Result<(), Error> {
+    // grab the path before it becomes a temporary one during the update
+    let exe_path = std::env::current_exe().expect("not executable");
+
     let status = self_update::backends::github::Update::configure()
         .repo_owner("PrecisionNutrition")
         .repo_name("pndev")
@@ -19,8 +22,6 @@ pub fn run() -> Result<(), Error> {
         .update()?;
 
     println!("Update status: `{}`!", status.version());
-
-    let exe_path = std::env::current_exe().expect("not executable");
 
     let metadata = std::fs::metadata(&exe_path)?;
     let mut perms = metadata.permissions();

@@ -71,6 +71,10 @@ enum CliCommand {
     /// DEPRECATED use down instead
     Stop,
 
+    #[structopt(name = "up")]
+    /// runs docker-compose up on pndev docker services, same as start -d
+    Up,
+
     #[structopt(name = "down")]
     /// runs docker-compose down on pndev docker services
     Down,
@@ -118,6 +122,7 @@ fn main() -> Result<(), ExitFailure> {
     let command_result = match args.command {
         CliCommand::Prepare { quick } => Command::prepare(quick),
         CliCommand::Shell => Command::shell(),
+        CliCommand::Up => Command::up(),
         CliCommand::Start { docker } => Command::start(docker),
         CliCommand::Stop => {
             println!("stop is DEPRECATED, use `pndev down` instead");

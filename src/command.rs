@@ -39,7 +39,7 @@ impl Command {
     }
 
     pub fn shell() -> Result<(), Error> {
-        Self::new().check()?.up()?._nix()?;
+        Self::new().check()?._up()?._nix()?;
 
         Ok(())
     }
@@ -50,10 +50,22 @@ impl Command {
         Command::new()
             .docker_only(docker_only)
             .check()?
-            .up()?
+            ._up()?
             ._start()?;
 
         trace!("start command done");
+
+        Ok(())
+    }
+
+    pub fn up() -> Result<(), Error> {
+        trace!("up command");
+
+        Command::new()
+            .check()?
+            ._up()?;
+
+        trace!("up command done");
 
         Ok(())
     }
@@ -103,7 +115,7 @@ impl Command {
 
         Command::new()
             .check()?
-            .up()?
+            ._up()?
             ._has_creds()?
             ._prepare(quick)?;
 
@@ -113,7 +125,7 @@ impl Command {
     pub fn clone(name: Option<String>, all: bool) -> Result<(), Error> {
         trace!("clone command");
 
-        Command::new().name(name).all(all).check()?.up()?._clone()?;
+        Command::new().name(name).all(all).check()?._up()?._clone()?;
 
         info!("Clone completed");
 
@@ -141,7 +153,7 @@ impl Command {
         Ok(self)
     }
 
-    pub fn up(&self) -> Result<&Self, Error> {
+    pub fn _up(&self) -> Result<&Self, Error> {
         shell::docker_up()?;
 
         Ok(self)

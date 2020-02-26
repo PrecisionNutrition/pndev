@@ -31,7 +31,7 @@ pub struct Command {
 
 impl Command {
     pub const fn new() -> Self {
-        Command {
+        Self {
             name: None,
             all: false,
             docker_only: false,
@@ -47,7 +47,7 @@ impl Command {
     pub fn start(docker_only: bool) -> Result<(), Error> {
         trace!("start command");
 
-        Command::new()
+        Self::new()
             .docker_only(docker_only)
             .check()?
             ._up()?
@@ -61,7 +61,7 @@ impl Command {
     pub fn up() -> Result<(), Error> {
         trace!("up command");
 
-        Command::new()
+        Self::new()
             .check()?
             ._up()?;
 
@@ -73,7 +73,7 @@ impl Command {
     pub fn down() -> Result<(), Error> {
         trace!("down command");
 
-        Command::new().check()?._down()?;
+        Self::new().check()?._down()?;
 
         trace!("down command done");
 
@@ -83,7 +83,7 @@ impl Command {
     pub fn ps() -> Result<(), Error> {
         trace!("ps command");
 
-        Command::new().check()?._ps()?;
+        Self::new().check()?._ps()?;
 
         trace!("ps command done");
 
@@ -93,7 +93,7 @@ impl Command {
     pub fn rebuild() -> Result<(), Error> {
         trace!("rebuild command");
 
-        Command::new().check()?._rebuild()?;
+        Self::new().check()?._rebuild()?;
 
         trace!("rebuild command done");
 
@@ -103,7 +103,7 @@ impl Command {
     pub fn reset() -> Result<(), Error> {
         trace!("reset command");
 
-        Command::new().check()?._reset()?;
+        Self::new().check()?._reset()?;
 
         trace!("reset command done");
 
@@ -113,7 +113,7 @@ impl Command {
     pub fn prepare(quick: bool) -> Result<(), Error> {
         trace!("anonymize command");
 
-        Command::new()
+        Self::new()
             .check()?
             ._up()?
             ._has_creds()?
@@ -125,7 +125,7 @@ impl Command {
     pub fn clone(name: Option<String>, all: bool) -> Result<(), Error> {
         trace!("clone command");
 
-        Command::new().name(name).all(all).check()?._up()?._clone()?;
+        Self::new().name(name).all(all).check()?._up()?._clone()?;
 
         info!("Clone completed");
 

@@ -7,13 +7,13 @@ use dns_lookup::lookup_host;
 
 use failure::{bail, Error};
 
-const APPS: [&str; 3] = ["git", "nix", "docker"];
+const APPS: &[&str] = &["git", "nix", "docker", "docker-compose"];
 const HOSTNAME: &str = "es-dev.precisionnutrition.com";
 
 /// Runs all checks
 pub fn all() -> Result<(), Error> {
     trace!("pn_doctor called");
-    for &app in &APPS {
+    for &app in APPS {
         if !check_app_installed(app) {
             bail!("{} not installed, run pndev doctor for help", app);
         }
@@ -29,7 +29,7 @@ pub fn all() -> Result<(), Error> {
 pub fn doctor() -> Result<(), Error> {
     trace!("check_all called");
 
-    for &app in &APPS {
+    for &app in APPS {
         if check_app_installed(app) {
             println!("{} {} installed", Green.paint("✓"), app);
         } else {

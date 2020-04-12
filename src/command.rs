@@ -12,7 +12,7 @@ use crate::check;
 use crate::git;
 use crate::shell;
 
-const APPS: &[&str] = &[
+const REPOS: &[&str] = &[
     "eternal-sledgehammer",
     "es-student",
     "fitpro",
@@ -20,11 +20,21 @@ const APPS: &[&str] = &[
     "payment-next",
     "courier",
     "owners-manual",
+    "profile-engine",
+];
+
+const APPS: &[&str] = &[
+    "eternal-sledgehammer",
+    "es-student",
+    "fitpro",
+    "es-certification",
+    "payment-next",
 ];
 
 #[derive(Debug)]
 pub struct Command {
     name: Option<String>,
+    pr: Option<String>,
     all: bool,
     docker_only: bool,
 }
@@ -33,6 +43,7 @@ impl Command {
     pub const fn new() -> Self {
         Self {
             name: None,
+            pr: None,
             all: false,
             docker_only: false,
         }
@@ -126,6 +137,16 @@ impl Command {
         Ok(())
     }
 
+    pub fn review(pr: Option<String>, name: Option<String>) -> Result<(), Error> {
+        trace!("review command");
+
+        Self::new().name(name).pr(pr).check()?._up()?._review()?;
+
+        info!("Review completed");
+
+        Ok(())
+    }
+
     pub fn all(&mut self, all: bool) -> &mut Self {
         self.all = all;
         self
@@ -138,6 +159,11 @@ impl Command {
 
     pub fn name(&mut self, name: Option<String>) -> &mut Self {
         self.name = name;
+        self
+    }
+
+    pub fn pr(&mut self, pr: Option<String>) -> &mut Self {
+        self.pr = pr;
         self
     }
 
@@ -244,7 +270,7 @@ impl Command {
 
     fn _clone(&self) -> Result<&Self, Error> {
         if self.all {
-            for &app in APPS {
+            for &app in REPOS {
                 println!("Cloning {}", app);
                 git::clone(app)?;
             }
@@ -252,11 +278,31 @@ impl Command {
             match &self.name {
                 Some(name) => {
                     println!("Cloning {}", name);
-                    git::clone(&name[..])?;
+                    git::clone(name)?;
                 }
                 None => bail!("Please specify an app name or --all"),
             }
         };
+
+        Ok(self)
+    }
+
+    fn _review(&self) -> Result<&Self, Error> {
+        match &self.pr {
+            Some(pr) => match &self.name {
+                Some(name) => {
+                    info!("Pulling {}:{} for review", name, pr);
+                    git::review(name, pr)?;
+                }
+                None => {
+                    for &app in APPS {
+                        info!("Pulling {}:{} for review", app, pr);
+                        git::review(app, pr)?;
+                    }
+                }
+            },
+            None => bail!("Please specify a Pull Request (branch name)"),
+        }
 
         Ok(self)
     }

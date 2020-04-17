@@ -51,6 +51,18 @@ enum CliCommand {
         name: Option<String>,
     },
 
+    #[structopt(name = "review")]
+    /// checkout a PR in one or all APP repos (not including addons)
+    Review {
+        #[structopt(name = "pr")]
+        /// branch name (JIRA ticket ID)
+        pr: Option<String>,
+
+        #[structopt(long = "name")]
+        /// name of the repository
+        name: Option<String>,
+    },
+
     #[structopt(name = "prepare")]
     /// prepares the db for eternal-sledgehammer
     Prepare {
@@ -134,6 +146,7 @@ fn main() -> Result<(), ExitFailure> {
         CliCommand::Reset => Command::reset(),
         CliCommand::Doctor => check::doctor(),
         CliCommand::Clone { name, all } => Command::clone(name, all),
+        CliCommand::Review { pr, name } => Command::review(pr, name),
         CliCommand::Update => update::run(),
     };
 

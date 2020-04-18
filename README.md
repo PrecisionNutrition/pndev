@@ -36,20 +36,20 @@ https://www.notion.so/precisionnutrition/Set-Up-Your-Local-Dev-Environment-bb651
 
 ## List of commands
 
-- [clone]**(#clone)
-- [doctor]**(#doctor)
-- [down]**(#down)
-- [help]**(#help)
-- [prepare]**(#prepare)
-- [ps]**(#ps)
-- [rebuild]**(#rebuild)
-- [reset]**(#reset)
-- [review]**(#review)
-- [shell]**(#shell)
-- [start]**(#start)
-- [stop]**(#stop)
-- [up]**(#up)
-- [update]**(#update)
+- [clone](#clone)
+- [doctor](#doctor)
+- [down](#down)
+- [help](#help)
+- [prepare](#prepare)
+- [ps](#ps)
+- [rebuild](#rebuild)
+- [reset](#reset)
+- [review](#review)
+- [shell](#shell)
+- [start](#start)
+- [stop](#stop)
+- [up](#up)
+- [update](#update)
 
 ### Clone
 

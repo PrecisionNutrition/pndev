@@ -29,29 +29,50 @@ install_path = 'DEV/PN'
 ```
 
 
-## Usage
+# Usage
 
 For a detailed description of the usage see our private wiki
 https://www.notion.so/precisionnutrition/Set-Up-Your-Local-Dev-Environment-bb65105ca8dc475191864d53bfca192f
 
-### Help
-```
-pndev help
+## List of commands
 
-# prints
+- [clone]**(#clone)
+- [doctor]**(#doctor)
+- [down]**(#down)
+- [help]**(#help)
+- [prepare]**(#prepare)
+- [ps]**(#ps)
+- [rebuild]**(#rebuild)
+- [reset]**(#reset)
+- [review]**(#review)
+- [shell]**(#shell)
+- [start]**(#start)
+- [stop]**(#stop)
+- [up]**(#up)
+- [update]**(#update)
 
-    clone      clone one or all the pn apps into ~/DEV/PN
-    doctor     diagnose system setup for pndev
-    help       Prints this message or the help of the given subcommand(s)
-    prepare    run optional setup steps (i.e db setup) -- has a --quick argument
-    ps         print docker status
-    rebuild    rebuild docker containers after downloading new config
-    reset      nuke nix gems and node stuff (to be used on ruby/node updates)
-    shell      start a nix-shell in the current application
-    start      start docker and ember s or rails - depends on application
-    down       stop docker services
-    update     attempts to update pndev itself to the latest released version
+### Clone
 
+Clone one repo under the PrecisionNutrition organization
+or clone all the main app repos (but not all the addon)
+
+Apps will be cloned into `~/DEV/PN`
+
+then you can `cd` in one of the supported applications
+
+* [eternal-sledgehammer](https://PrecisionNutrition/eternal-sledgehammer)
+* [es-student](https://PrecisionNutrition/es-student)
+* [es-certification](https://PrecisionNutrition/es-certification)
+* [fitpro](https://PrecisionNutrition/fitpro)
+* [payment-next](https://PrecisionNutrition/payment-next)
+
+
+#### Usage:
+
+```bash
+pndev clone -a
+# or
+pndev clone es-student
 ```
 
 ### Doctor
@@ -120,18 +141,28 @@ ssh-add <path to keyfile>
 
 run `pndev doctor` again and all checks should be green
 
-### Cloning
+### Down
 
-if you do not have the apps already you can use `pndev clone --all`
-to clone the most used apps into `~/DEV/PN`
+Stops all docker instances
+it's equivalent to `docker-compose down` for postsgres, rails etc
 
-then you can `cd` in one of the supported applications
 
-* [eternal-sledgehammer](https://PrecisionNutrition/eternal-sledgehammer)
-* [es-student](https://PrecisionNutrition/es-student)
-* [es-certification](https://PrecisionNutrition/es-certification)
-* [fitpro](https://PrecisionNutrition/fitpro)
-* [payment-next](https://PrecisionNutrition/payment-next)
+#### Usage:
+
+```bash
+pndev down
+```
+### Help
+
+Print help message and gives help on a specific command
+
+#### Usage:
+
+```bash
+pndev help
+pndev help clone
+pndev help ...
+```
 
 ### Prepare
 
@@ -153,7 +184,7 @@ cd ~/DEV/PN/eternal-sledgehammer
 
 and run the prepare command
 
-```
+```bash
 pndev prepare
 ```
 
@@ -163,36 +194,135 @@ This will start the databases, install the dependencies and prepare the database
 
 you can safely re-run the `pndev prepare` command every time you want to reset your database
 
+### Ps
+
+Print status of all docker services
+
+
+#### Usage:
+
+```bash
+pndev pd
+```
+
+### Rebuild
+
+Rebuild all docker services. This is to be used when the docker configuration changes.
+
+#### Usage:
+
+```bash
+pndev rebuild
+```
+
+### Reset
+
+Remove all dependecies installed for the current project. Nukes node_modules and bundler gems
+
+Use this when having npm / bundler woes
+
+#### Usage:
+
+```bash
+pndev reset
+```
+
+### Review
+
+Easily review pull requests, even when they span multiple repositories
+
+Use this command to checkout a specific PR using the branch name
+
+
+
+#### Usage:
+
+```bash
+pndev review BRANCHNAME
+
+# example
+pndev review DS-49
+
+pndev review DS-49 --name fitpro
+pndev review DS-49 --name profile-engine
+```
+
+output sample
+
+```
+ghedamat on lurker in fitpro on  master [⇣$?] is 📦 v0.0.0 via ⬢ v10.17.0 took 1h32m40s
+❯ pndev review DS-50
+Starting catalog_redis_sidekiq_1 ... done
+Starting catalog_postgres_1      ... done
+Starting catalog_mailcatcher_1   ... done
+Starting catalog_dockerhost_1    ... done
+Starting catalog_nginx_1         ... done
+⚠ remote branch not found for eternal-sledgehammer:DS-50
+⚠ remote branch not found for es-student:DS-50
+✓ successfully checked out fitpro:DS-50
+⚠ remote branch not found for es-certification:DS-50
+⚠ remote branch not found for payment-next:DS-50
+```
+
+### Shell
+
+Starts a shell (a `nix-shell` to be precise),
+this produces a shell with all the project dependencies (ruby, node, openssl..)
+
+Use this shell to run commands like `bundle exec rails c` or `yarn run ember test --server`
+
+Remember to prefix commands with `bundle exec` or `yarn exec`
+
+#### Usage:
+
+```bash
+pndev reset
+```
 
 ### Start
 
 The `start` command will start the development server for the current application
 based on the directory you're in.
 
-Remember that to run the `ember server` you should always have rails running
+Remember that to use one ember app you should always ALSO
+have rails running
 
-```
-cd ~/DEV/PN/eternal-sledgehammer
+
+#### Usage:
+
+```bash
 pndev start
+
+# start only docker
+pndev start -d
 ```
 
+### Up
 
-### Shell
-To start a development shell that has all the dependencies use
+Alias to `pndev start -d`
 
+#### Usage:
+
+```bash
+pndev up
 ```
-pndev shell
-```
 
-From here you can use any `bundle` or `yarn` command
-remember to prefix commands with `bundle exec` or `yarn exec`
+### Update
+
+Downloads and installs the most recent version of pndev
+
+#### Usage:
+
+```bash
+pndev update
+```
 
 
 ## Developing
 
 This project uses a nix-shell to provide the build environment
 
-type 
+type
 
 ```
 nix-shell

@@ -199,6 +199,16 @@ pub fn rails_set_env() -> Result<ExitStatus, Error> {
         .spawn()
 }
 
+pub fn rails_db_create() -> Result<ExitStatus, Error> {
+    let args = vec!["--run", "bundle && yarn && bundle exec rails db:create"];
+
+    Shell::new()
+        .cmd("nix-shell")
+        .args(args)
+        .error_msg("Rails db:drop failed")
+        .spawn()
+}
+
 pub fn rails_db_drop() -> Result<ExitStatus, Error> {
     let args = vec![
         "--run",

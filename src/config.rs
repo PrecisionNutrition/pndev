@@ -1,4 +1,3 @@
-use confy;
 use dirs::home_dir;
 use log::info;
 use serde::{Deserialize, Serialize};

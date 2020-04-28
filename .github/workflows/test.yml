@@ -22,7 +22,7 @@ jobs:
     steps:
     - uses: hecrj/setup-rust-action@v1
       with:
-        rust-version: stable
+        rust-version: nightly
     - uses: actions/checkout@v1
     - name: setup
       run: rustup component add clippy rustfmt

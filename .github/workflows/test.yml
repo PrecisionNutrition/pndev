@@ -10,6 +10,7 @@ jobs:
     name: Publish for ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
         include:
@@ -22,7 +23,7 @@ jobs:
     steps:
     - uses: hecrj/setup-rust-action@v1
       with:
-        rust-version: nightly
+        rust-version: stable
     - uses: actions/checkout@v1
     - name: setup
       run: rustup component add clippy rustfmt

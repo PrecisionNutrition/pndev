@@ -1,5 +1,4 @@
 use failure::Error;
-use self_update;
 
 use crate::git;
 use crate::shell;

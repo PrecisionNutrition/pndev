@@ -283,3 +283,13 @@ pub fn reset() -> Result<ExitStatus, Error> {
 
     Shell::new().cmd("rm").args(args2).spawn()
 }
+
+pub fn run(cmd: &str) -> Result<ExitStatus, Error> {
+    let args = vec!["--run", cmd];
+
+    Shell::new()
+        .cmd("nix-shell")
+        .args(args)
+        .error_msg("Forego start failed")
+        .spawn()
+}

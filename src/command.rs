@@ -10,6 +10,7 @@ use dirs::home_dir;
 
 use crate::check;
 use crate::git;
+use crate::parse;
 use crate::shell;
 
 const REPOS: &[&str] = &[
@@ -190,6 +191,16 @@ impl Command {
     fn _start(&self) -> Result<&Self, Error> {
         if self.docker_only {
             info!("Starting only docker services");
+        } else if Path::new("pndev.toml").exists() {
+            let command = parse::config()?;
+            match command["start"].as_str() {
+                Some(cmd) => {
+                    info!("executing start command: {}", cmd);
+                    shell::run(cmd)?;
+                }
+                None => bail!("No start command found in pndev.toml"),
+            }
+        // old code paths - to be removed
         } else if Path::new("Gemfile.lock").exists() {
             shell::forego_start()?;
         } else if Path::new("ember-cli-build.js").exists() {
@@ -249,21 +260,43 @@ impl Command {
     }
 
     fn _prepare(&self, quick: bool) -> Result<&Self, Error> {
-        if Path::new("Gemfile.lock").exists() {
-            shell::npm_rebuild_deps()?;
-
-            shell::rails_db_create()?;
-            shell::rails_set_env()?;
-            shell::rails_db_drop()?;
-            shell::rails_migrate()?;
-
-            if !quick {
-                shell::rails_anonymize()?;
+        if Path::new("pndev.toml").exists() {
+            let command = parse::config()?;
+            if quick {
+                match command["quick_prepare"].as_str() {
+                    Some(cmd) => {
+                        info!("executing quick_prepare command: {}", cmd);
+                        shell::run(cmd)?;
+                    }
+                    None => bail!("No quick_prepare command found in pndev.toml"),
+                }
+            } else {
+                match command["prepare"].as_str() {
+                    Some(cmd) => {
+                        info!("executing prepare command: {}", cmd);
+                        shell::run(cmd)?;
+                    }
+                    None => bail!("No prepare command found in pndev.toml"),
+                }
             }
+        // old code paths - to be removed
+        } else if Path::new("Gemfile.lock").exists() {
+            if Path::new("Gemfile.lock").exists() {
+                shell::npm_rebuild_deps()?;
 
-            shell::rails_bootstrap()?;
-        } else {
-            bail!("No Gemfile found, are you in the right directory?")
+                shell::rails_db_create()?;
+                shell::rails_set_env()?;
+                shell::rails_db_drop()?;
+                shell::rails_migrate()?;
+
+                if !quick {
+                    shell::rails_anonymize()?;
+                }
+
+                shell::rails_bootstrap()?;
+            } else {
+                bail!("No Gemfile found, are you in the right directory?")
+            }
         }
 
         Ok(self)

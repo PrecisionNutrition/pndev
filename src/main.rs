@@ -32,6 +32,8 @@ mod update;
 
 mod config;
 
+mod parse;
+
 #[derive(StructOpt, Debug)]
 /// Available commands
 enum CliCommand {

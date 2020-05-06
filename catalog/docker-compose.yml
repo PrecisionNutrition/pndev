@@ -24,7 +24,7 @@ x-default-links: &default_links
     - mailcatcher
 
 volumes:
-  pgdata:
+  pgdata11:
   redis:
   redis_cache:
 
@@ -65,7 +65,8 @@ services:
       dockerfile: docker/Dockerfile.postgres
     environment:
       POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata11:/var/lib/postgresql/data
     ports:
       - "5432:5432"

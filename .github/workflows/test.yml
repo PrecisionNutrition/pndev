@@ -7,7 +7,7 @@ name: test
 
 jobs:
   test:
-    name: Publish for ${{ matrix.os }}
+    name: clippy and fmt ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false

@@ -14,6 +14,9 @@ use exitfailure::ExitFailure;
 
 use log::{info, warn};
 
+use command::Command;
+use std::fmt;
+
 /// Check functions
 mod check;
 
@@ -25,14 +28,47 @@ mod git;
 
 /// Command functions
 mod command;
-use command::Command;
 
 /// Self update
 mod update;
 
 mod config;
 
+mod opt_log;
 mod parse;
+
+#[derive(Debug)]
+pub enum ResetType {
+    All,
+    Docker,
+    Local,
+}
+
+#[derive(Debug)]
+pub struct ParseError {
+    msg: &'static str,
+}
+
+impl fmt::Display for ParseError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.msg)
+    }
+}
+
+impl std::str::FromStr for ResetType {
+    type Err = ParseError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "all" => Ok(Self::All),
+            "docker" => Ok(Self::Docker),
+            "local" => Ok(Self::Local),
+            _ => Err(ParseError {
+                msg: "options are: all, docker, local",
+            }),
+        }
+    }
+}
 
 #[derive(StructOpt, Debug)]
 /// Available commands
@@ -103,7 +139,11 @@ enum CliCommand {
 
     #[structopt(name = "reset")]
     /// Nukes the nix-shell config (use when ruby/node version changes)
-    Reset,
+    Reset {
+        /// all, docker, local , docker forces a rebuild, local deletes local dependencies
+        #[structopt(name = "reset type")]
+        docker_or_local: ResetType,
+    },
 
     #[structopt(name = "update")]
     /// attempts to update pndev itself to the latest released version
@@ -120,7 +160,7 @@ struct Cli {
     #[structopt(flatten)]
     verbose: Verbosity,
     #[structopt(flatten)]
-    log: clap_log_flag::Log,
+    log: opt_log::Log,
 
     #[structopt(subcommand)]
     command: CliCommand,
@@ -138,18 +178,21 @@ fn main() -> Result<(), ExitFailure> {
         CliCommand::Shell => Command::shell(),
         CliCommand::Up => Command::up(),
         CliCommand::Start { docker } => Command::start(docker),
-        CliCommand::Stop => {
-            println!("stop is DEPRECATED, use `pndev down` instead");
-            Command::down()
-        }
         CliCommand::Down => Command::down(),
         CliCommand::Ps => Command::ps(),
-        CliCommand::Rebuild => Command::rebuild(),
-        CliCommand::Reset => Command::reset(),
+        CliCommand::Reset { docker_or_local } => Command::reset(docker_or_local),
         CliCommand::Doctor => check::doctor(),
         CliCommand::Clone { name, all } => Command::clone(name, all),
         CliCommand::Review { pr, name } => Command::review(pr, name),
         CliCommand::Update => update::run(),
+        CliCommand::Stop => {
+            println!("stop is DEPRECATED, use `pndev down` instead");
+            Command::down()
+        }
+        CliCommand::Rebuild => {
+            println!("rebuild is DEPRECATED, use `pndev reset docker` instead");
+            Command::reset(ResetType::Docker)
+        }
     };
 
     Ok(command_result?)

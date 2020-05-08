@@ -12,6 +12,7 @@ use crate::check;
 use crate::git;
 use crate::parse;
 use crate::shell;
+use crate::ResetType;
 
 const REPOS: &[&str] = &[
     "eternal-sledgehammer",
@@ -100,20 +101,17 @@ impl Command {
         Ok(())
     }
 
-    pub fn rebuild() -> Result<(), Error> {
-        trace!("rebuild command");
-
-        Self::new().check()?._rebuild()?;
-
-        trace!("rebuild command done");
-
-        Ok(())
-    }
-
-    pub fn reset() -> Result<(), Error> {
+    pub fn reset(docker_or_local: ResetType) -> Result<(), Error> {
         trace!("reset command");
 
-        Self::new().check()?._reset()?;
+        match docker_or_local {
+            ResetType::All => {
+                Self::new().check()?._rebuild()?;
+                Self::new().check()?._reset()?
+            }
+            ResetType::Docker => Self::new().check()?._rebuild()?,
+            ResetType::Local => Self::new().check()?._reset()?,
+        };
 
         trace!("reset command done");
 

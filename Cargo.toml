@@ -8,9 +8,8 @@ edition = "2018"
 
 [dependencies]
 # arg parsing
-structopt = "0.2.10"
-clap-verbosity-flag = "0.2.0"
-clap-log-flag = "0.1.0"
+structopt = "0.3.14"
+clap-verbosity-flag = "0.3.1"
 
 # error handling
 failure = "0.1.5"

@@ -20,9 +20,12 @@ If you would like to customize the installation path for the repositories you ca
 # run
 pndev doctor
 # this will create a ~/.pndev_config.toml for you to edit if you don't have one
+
 ```
 
 ### Config file format
+
+> the path is relative to your  home directory!
 
 ```
 install_path = 'DEV/PN'

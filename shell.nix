@@ -12,7 +12,7 @@ let
 in
   with nixpkgs;
   stdenv.mkDerivation {
-    name = "rust";
+    name = "pndev";
     buildInputs = inputs;
 
     shellHook = ''

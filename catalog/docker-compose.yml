@@ -48,13 +48,13 @@ services:
       - "1080:1080"
       - "1025:1025"
   redis_cache:
-    image: redis:4
+    image: redis:5
     volumes:
       - redis_cache:/data
     ports:
       - "6666:6379"
   redis_sidekiq:
-    image: redis:4
+    image: redis:5
     ports:
       - "6379:6379"
     volumes:

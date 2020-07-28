@@ -39,9 +39,9 @@ mod parse;
 
 #[derive(Debug)]
 pub enum ResetType {
-    All,
     Docker,
-    Local,
+    Deps,
+    Scratch,
 }
 
 #[derive(Debug)]
@@ -60,9 +60,9 @@ impl std::str::FromStr for ResetType {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "all" => Ok(Self::All),
+            "scratch" => Ok(Self::Scratch),
             "docker" => Ok(Self::Docker),
-            "local" => Ok(Self::Local),
+            "deps" => Ok(Self::Deps),
             _ => Err(ParseError {
                 msg: "options are: all, docker, local",
             }),
@@ -140,9 +140,9 @@ enum CliCommand {
     #[structopt(name = "reset")]
     /// Nukes the nix-shell config (use when ruby/node version changes)
     Reset {
-        /// all, docker, local , docker forces a rebuild, local deletes local dependencies
+        /// deps, docker, scratch:  deps deletes local dependencies, docker updates the docker config, scratch wipes everything, including git changes
         #[structopt(name = "reset type")]
-        docker_or_local: ResetType,
+        reset_type: ResetType,
     },
 
     #[structopt(name = "update")]
@@ -180,7 +180,7 @@ fn main() -> Result<(), ExitFailure> {
         CliCommand::Start { docker } => Command::start(docker),
         CliCommand::Down => Command::down(),
         CliCommand::Ps => Command::ps(),
-        CliCommand::Reset { docker_or_local } => Command::reset(docker_or_local),
+        CliCommand::Reset { reset_type } => Command::reset(reset_type),
         CliCommand::Doctor => check::doctor(),
         CliCommand::Clone { name, all } => Command::clone(name, all),
         CliCommand::Review { pr, name } => Command::review(pr, name),

@@ -220,14 +220,16 @@ pndev rebuild
 
 ### Reset
 
-Remove all dependecies installed for the current project. Nukes node_modules and bundler gems
+When things go wrong `pndev reset` is your friend. There are 3 options
 
-Use this when having npm / bundler woes
+* `deps` Remove all dependecies installed for the current project, gems or node modules. Use this when changing node or ruby versions or when you are worried about your deps being out of date.
+* `docker` Resets the docker-compose config for our dev environment. This is rarely needed, but useful when we update postgres or redis or other external services.
+* `scratch` This is the thing to use when all else fails. Usually you wanna `cd ~/DEV/PN/eternal-sledgehammer` for this. It will reset everything to master, reset docker and remove all your dependecies. You probably want to follow this with a `pndev prepare`.
 
 #### Usage:
 
 ```bash
-pndev reset
+pndev reset <deps, docker, scratch>
 ```
 
 ### Review

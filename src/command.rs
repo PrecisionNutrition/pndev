@@ -8,6 +8,9 @@ use failure::bail;
 
 use dirs::home_dir;
 
+use ansi_term::Colour::Red;
+use dialoguer::Confirm;
+
 use crate::check;
 use crate::git;
 use crate::parse;
@@ -105,12 +108,19 @@ impl Command {
         trace!("reset command");
 
         match docker_or_local {
-            ResetType::All => {
-                Self::new().check()?._rebuild()?;
-                Self::new().check()?._reset()?
+            ResetType::Scratch => {
+                if Confirm::new()
+                    .with_prompt(Red.paint("DANGER: pndev reset scratch will reset all your local changes. Use with care").to_string())
+                    .default(false)
+                    .interact()?
+                {
+                    Self::new().check()?._scratch()?._rebuild()?._reset()?
+                } else {
+                    bail!("User abort");
+                }
             }
             ResetType::Docker => Self::new().check()?._rebuild()?,
-            ResetType::Local => Self::new().check()?._reset()?,
+            ResetType::Deps => Self::new().check()?._reset()?,
         };
 
         trace!("reset command done");
@@ -190,17 +200,7 @@ impl Command {
         if self.docker_only {
             info!("Starting only docker services");
         } else if Path::new("pndev.toml").exists() {
-            let command = parse::config()?;
-            match command["start"].as_str() {
-                Some(cmd) => {
-                    info!("executing start command: {}", cmd);
-                    shell::run(cmd)?;
-                }
-                None => bail!("No start command found in pndev.toml"),
-            }
-        // old code paths - to be removed
-        } else if Path::new("Gemfile.lock").exists() {
-            shell::forego_start()?;
+            run_pndev_toml_command("start")?;
         } else if Path::new("ember-cli-build.js").exists() {
             shell::ember_start()?;
         } else {
@@ -257,44 +257,16 @@ impl Command {
         Ok(self)
     }
 
+    fn _scratch(&self) -> Result<&Self, Error> {
+        run_pndev_toml_command("scratch")?;
+        Ok(self)
+    }
+
     fn _prepare(&self, quick: bool) -> Result<&Self, Error> {
-        if Path::new("pndev.toml").exists() {
-            let command = parse::config()?;
-            if quick {
-                match command["quick_prepare"].as_str() {
-                    Some(cmd) => {
-                        info!("executing quick_prepare command: {}", cmd);
-                        shell::run(cmd)?;
-                    }
-                    None => bail!("No quick_prepare command found in pndev.toml"),
-                }
-            } else {
-                match command["prepare"].as_str() {
-                    Some(cmd) => {
-                        info!("executing prepare command: {}", cmd);
-                        shell::run(cmd)?;
-                    }
-                    None => bail!("No prepare command found in pndev.toml"),
-                }
-            }
-        // old code paths - to be removed
-        } else if Path::new("Gemfile.lock").exists() {
-            if Path::new("Gemfile.lock").exists() {
-                shell::npm_rebuild_deps()?;
-
-                shell::rails_db_create()?;
-                shell::rails_set_env()?;
-                shell::rails_db_drop()?;
-                shell::rails_migrate()?;
-
-                if !quick {
-                    shell::rails_anonymize()?;
-                }
-
-                shell::rails_bootstrap()?;
-            } else {
-                bail!("No Gemfile found, are you in the right directory?")
-            }
+        if quick {
+            run_pndev_toml_command("quick_prepare")?;
+        } else {
+            run_pndev_toml_command("prepare")?;
         }
 
         Ok(self)
@@ -338,4 +310,24 @@ impl Command {
 
         Ok(self)
     }
+}
+
+fn run_pndev_toml_command(name: &str) -> Result<(), Error> {
+    if Path::new("pndev.toml").exists() {
+        let command = parse::config()?;
+        match command.get(name) {
+            Some(cmd) => match cmd.as_str() {
+                Some(cmd) => {
+                    info!("executing {} command: {}", name, cmd);
+                    shell::run(cmd)?;
+                }
+                None => bail!("Invalid {} command", name),
+            },
+            None => bail!("No {} command found in pndev.toml", name),
+        }
+    } else {
+        bail!("pndev.toml not found")
+    }
+
+    Ok(())
 }

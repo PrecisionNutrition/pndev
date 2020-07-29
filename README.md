@@ -197,6 +197,8 @@ This will start the databases, install the dependencies and prepare the database
 
 you can safely re-run the `pndev prepare` command every time you want to reset your database
 
+Optionally you can also pass a `pndev prepare -b` that will restore a bigger database with customer data.
+
 ### Ps
 
 Print status of all docker services

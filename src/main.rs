@@ -105,8 +105,11 @@ enum CliCommand {
     /// prepares the db for eternal-sledgehammer
     Prepare {
         #[structopt(short = "q", long = "quick")]
-        /// Do not use a remote snapshot, just bootstrap, no program data will be restored
+        /// Remote snapshot with no client data, no program data will be restored
         quick: bool,
+        #[structopt(short = "b", long = "big")]
+        /// User a remote snapshot with some anonymized client data, then bootstrap
+        big: bool,
     },
 
     #[structopt(name = "start")]
@@ -116,10 +119,6 @@ enum CliCommand {
         /// do not attempt to start also rails or ember apps
         docker: bool,
     },
-
-    #[structopt(name = "stop")]
-    /// DEPRECATED use down instead
-    Stop,
 
     #[structopt(name = "up")]
     /// runs docker-compose up on pndev docker services, same as start -d
@@ -174,7 +173,12 @@ fn main() -> Result<(), ExitFailure> {
     info!("LogLevel Info");
 
     let command_result = match args.command {
-        CliCommand::Prepare { quick } => Command::prepare(quick),
+        CliCommand::Prepare { quick, big } => {
+            if quick {
+                println!("pndev prepare -q is DEPRECATED as it is the default now, use --big for the old prepare");
+            }
+            Command::prepare(big)
+        }
         CliCommand::Shell => Command::shell(),
         CliCommand::Up => Command::up(),
         CliCommand::Start { docker } => Command::start(docker),
@@ -185,10 +189,6 @@ fn main() -> Result<(), ExitFailure> {
         CliCommand::Clone { name, all } => Command::clone(name, all),
         CliCommand::Review { pr, name } => Command::review(pr, name),
         CliCommand::Update => update::run(),
-        CliCommand::Stop => {
-            println!("stop is DEPRECATED, use `pndev down` instead");
-            Command::down()
-        }
         CliCommand::Rebuild => {
             println!("rebuild is DEPRECATED, use `pndev reset docker` instead");
             Command::reset(ResetType::Docker)

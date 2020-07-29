@@ -128,10 +128,10 @@ impl Command {
         Ok(())
     }
 
-    pub fn prepare(quick: bool) -> Result<(), Error> {
+    pub fn prepare(big: bool) -> Result<(), Error> {
         trace!("anonymize command");
 
-        Self::new().check()?._up()?._has_creds()?._prepare(quick)?;
+        Self::new().check()?._up()?._has_creds()?._prepare(big)?;
 
         Ok(())
     }
@@ -262,11 +262,11 @@ impl Command {
         Ok(self)
     }
 
-    fn _prepare(&self, quick: bool) -> Result<&Self, Error> {
-        if quick {
-            run_pndev_toml_command("quick_prepare")?;
-        } else {
+    fn _prepare(&self, big: bool) -> Result<&Self, Error> {
+        if big {
             run_pndev_toml_command("prepare")?;
+        } else {
+            run_pndev_toml_command("quick_prepare")?;
         }
 
         Ok(self)

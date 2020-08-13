@@ -64,7 +64,7 @@ impl std::str::FromStr for ResetType {
             "docker" => Ok(Self::Docker),
             "deps" => Ok(Self::Deps),
             _ => Err(ParseError {
-                msg: "options are: all, docker, local",
+                msg: "options are: docker, deps, scratch",
             }),
         }
     }

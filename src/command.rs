@@ -20,6 +20,7 @@ use crate::ResetType;
 const REPOS: &[&str] = &[
     "eternal-sledgehammer",
     "es-student",
+    "es-admin",
     "fitpro",
     "es-certification",
     "payment-next",
@@ -33,6 +34,7 @@ const APPS: &[&str] = &[
     "es-student",
     "fitpro",
     "es-certification",
+    "es-admin",
     "payment-next",
 ];
 

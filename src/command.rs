@@ -27,6 +27,7 @@ const REPOS: &[&str] = &[
     "courier",
     "owners-manual",
     "profile-engine",
+    "academy",
 ];
 
 const APPS: &[&str] = &[
@@ -36,6 +37,7 @@ const APPS: &[&str] = &[
     "es-certification",
     "es-admin",
     "payment-next",
+    "academy",
 ];
 
 #[derive(Debug)]

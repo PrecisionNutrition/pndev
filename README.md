@@ -63,11 +63,11 @@ Apps will be cloned into `~/DEV/PN`
 
 then you can `cd` in one of the supported applications
 
-* [eternal-sledgehammer](https://PrecisionNutrition/eternal-sledgehammer)
-* [es-student](https://PrecisionNutrition/es-student)
-* [es-certification](https://PrecisionNutrition/es-certification)
-* [fitpro](https://PrecisionNutrition/fitpro)
-* [payment-next](https://PrecisionNutrition/payment-next)
+* [eternal-sledgehammer](https://github.com/PrecisionNutrition/eternal-sledgehammer)
+* [es-student](https://github.com/PrecisionNutrition/es-student)
+* [es-certification](https://github.com/PrecisionNutrition/es-certification)
+* [fitpro](https://github.com/PrecisionNutrition/fitpro)
+* [payment-next](https://github.com/PrecisionNutrition/payment-next)
 
 
 #### Usage:

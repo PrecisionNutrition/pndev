@@ -108,7 +108,7 @@ Nix is a cross platform package manager [website](https://nixos.org/nix/)
 you can install it with the following commands
 
 ```
-curl https://nixos.org/nix/install | sh
+curl -L https://nixos.org/nix/install | sh
 
 # add
 # . /home/ubuntu/.nix-profile/etc/profile.d/nix.sh

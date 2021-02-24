@@ -160,6 +160,15 @@ impl Command {
         Ok(())
     }
 
+    // pub fn up() -> Result<(), Error> {
+    pub fn gh() -> Result<(), Error> {
+        trace!("gh command");
+
+        git::open()?;
+
+        Ok(())
+    }
+
     pub fn all(&mut self, all: bool) -> &mut Self {
         self.all = all;
         self
@@ -193,7 +202,7 @@ impl Command {
     }
 
     pub fn _nix(&self) -> Result<&Self, Error> {
-        trace!("shell started ");
+        trace!("shell started");
         shell::nix()?;
 
         trace!("shell closed");

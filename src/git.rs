@@ -4,6 +4,8 @@ use failure::{bail, Error};
 use log::trace;
 use std::fs;
 use std::process::Command;
+use regex::Regex;
+use lazy_static::lazy_static;
 
 /// Clones a github repo from the PN org
 pub fn clone(name: &str) -> Result<(), Error> {
@@ -116,6 +118,47 @@ fn run_git_command(args: &[&str]) -> Result<(), Error> {
         Ok(output) => {
             if output.status.code().unwrap() % 255 == 0 {
                 Ok(())
+            } else {
+                bail!("{}", std::str::from_utf8(&output.stderr).unwrap())
+            }
+        }
+        Err(err) => bail!("{} error", err),
+    }
+}
+
+fn extract_repo_name(input: &str) -> Option<&str> {
+    lazy_static! {
+        static ref RE: Regex = Regex::new(r".*PrecisionNutrition/(?P<repo_name>.*)\.git").unwrap();
+    }
+    RE.captures(input).and_then(|cap| {
+        cap.name("repo_name").map(|repo_name| repo_name.as_str())
+    })
+}
+
+// Opens github repo in PN org
+pub fn open() -> Result<(), Error> {
+    let args = ["remote", "get-url", "origin"];
+    let result = Command::new("git").args(&args).output();
+
+    trace!("running git {:?}", result);
+
+    match result {
+        Ok(output) => {
+            if output.status.code().unwrap() % 255 == 0 {
+                let remote = std::str::from_utf8(&output.stdout).unwrap();
+
+                match extract_repo_name(remote) {
+                    Some(repo_name) => {
+                        let repo_url = format!("https://github.com/PrecisionNutrition/{}", repo_name);
+
+                        trace!("repo_url {:?}", repo_url);
+
+                        open::that(repo_url).unwrap();
+
+                        Ok(())
+                    },
+                    None => bail!("Could not determine repo url"),
+                }
             } else {
                 bail!("{}", std::str::from_utf8(&output.stderr).unwrap())
             }

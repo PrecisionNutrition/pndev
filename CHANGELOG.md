@@ -1,3 +1,7 @@
+# Unreleased
+
+- Adds `pndev gh` to open project repo with current branch
+
 # 0.2.0
 
 * `pndev prepare` now defaults to `--quiet` and the old bigger prepare is replaced with `--big`

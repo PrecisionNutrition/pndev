@@ -343,6 +343,12 @@ On first use you will have to install the toolchain
 rustup toolchain install stable
 ```
 
+On Mac, you may also have to manually set the default toolchain
+
+```
+rustup default stable
+```
+
 On later uses the basic workflow is
 
 ```
@@ -355,7 +361,7 @@ using `cargo run` you have to use `--`
 example
 
 ```
-cargo run -- check -vvvv
+cargo run -- -vvvv doctor
 ```
 
 ### Use clippy

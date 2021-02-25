@@ -67,7 +67,7 @@ pub fn review(name: &str, pr: &str) -> Result<(), Error> {
     let args2 = ["ls-remote", "--exit-code", "origin", pr];
     match run_git_command(&args2) {
         Ok(_output) => {
-            pr_checkout(name, pr)?;
+            pr_checkout(name, pr);
         }
 
         Err(_err) => {
@@ -83,7 +83,7 @@ pub fn review(name: &str, pr: &str) -> Result<(), Error> {
     Ok(())
 }
 
-fn pr_checkout(name: &str, pr: &str) -> Result<(), Error> {
+fn pr_checkout(name: &str, pr: &str) {
     let origin = format!("origin/{}", pr);
     let args = ["checkout", "-b", pr, &origin];
     match run_git_command(&args) {
@@ -104,9 +104,7 @@ fn pr_checkout(name: &str, pr: &str) -> Result<(), Error> {
                 err
             );
         }
-    }
-
-    Ok(())
+    };
 }
 
 fn run_git_command(args: &[&str]) -> Result<(), Error> {

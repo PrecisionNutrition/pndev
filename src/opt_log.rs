@@ -15,8 +15,8 @@ pub struct Log {
 
 use env_logger::Builder as LoggerBuilder;
 
-fn init_builder(_pretty: bool) -> Result<LoggerBuilder, Error> {
-    Ok(LoggerBuilder::new())
+fn init_builder(_pretty: bool) -> LoggerBuilder {
+    LoggerBuilder::new()
 }
 
 impl Log {
@@ -28,7 +28,7 @@ impl Log {
             None => return Ok(()),
         };
 
-        init_builder(self.pretty)?
+        init_builder(self.pretty)
             .filter(None, level_filter)
             .try_init()?;
         Ok(())

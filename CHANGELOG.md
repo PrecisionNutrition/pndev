@@ -1,6 +1,7 @@
 # Unreleased
 
 - Adds `pndev gh` to open project repo with current branch
+- Adds `pndev console` to start a rails console in a nix-shell
 
 # 0.2.0
 

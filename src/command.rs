@@ -160,11 +160,21 @@ impl Command {
         Ok(())
     }
 
-    // pub fn up() -> Result<(), Error> {
     pub fn gh() -> Result<(), Error> {
         trace!("gh command");
 
         git::open()?;
+
+        Ok(())
+    }
+
+    pub fn console() -> Result<(), Error> {
+        trace!("console command");
+
+        Self::new()
+            .check()?
+            ._up()?
+            ._console()?;
 
         Ok(())
     }
@@ -203,9 +213,11 @@ impl Command {
 
     pub fn _nix(&self) -> Result<&Self, Error> {
         trace!("shell started");
+
         shell::nix()?;
 
         trace!("shell closed");
+
         Ok(self)
     }
 
@@ -223,8 +235,21 @@ impl Command {
         Ok(self)
     }
 
+    fn _console(&self) -> Result<&Self, Error> {
+        trace!("calling _console and passing to shell");
+
+        if Path::new("pndev.toml").exists() {
+            shell::run("bundle exec rails console")?;
+        } else {
+            bail!("No Rails application found")
+        }
+
+        Ok(self)
+    }
+
     fn _down(&self) -> Result<&Self, Error> {
         shell::docker_down()?;
+
         Ok(self)
     }
 
@@ -254,6 +279,7 @@ impl Command {
 
     fn _reset(&self) -> Result<&Self, Error> {
         trace!("calling _reset and passing to shell");
+
         shell::reset()?;
 
         Ok(self)
@@ -272,6 +298,7 @@ impl Command {
 
     fn _scratch(&self) -> Result<&Self, Error> {
         run_pndev_toml_command("scratch")?;
+
         Ok(self)
     }
 
@@ -299,7 +326,7 @@ impl Command {
                 }
                 None => bail!("Please specify an app name or --all"),
             }
-        };
+        }
 
         Ok(self)
     }

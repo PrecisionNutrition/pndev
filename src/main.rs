@@ -155,6 +155,10 @@ enum CliCommand {
     #[structopt(name = "gh")]
     /// opens the corresponding repo on github if available
     Gh,
+
+    #[structopt(name = "console")]
+    /// starts a rails console in the shell
+    Console,
 }
 
 // CLI definition
@@ -198,6 +202,7 @@ fn main() -> Result<(), ExitFailure> {
             Command::reset(ResetType::Docker)
         },
         CliCommand::Gh => Command::gh(),
+        CliCommand::Console => Command::console(),
     };
 
     Ok(command_result?)

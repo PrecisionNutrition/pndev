@@ -186,7 +186,7 @@ fn main() -> Result<(), ExitFailure> {
                 println!("pndev prepare -q is DEPRECATED as it is the default now, use --big for the old prepare");
             }
             Command::prepare(big)
-        },
+        }
         CliCommand::Shell => Command::shell(),
         CliCommand::Up => Command::up(),
         CliCommand::Start { docker } => Command::start(docker),
@@ -200,7 +200,7 @@ fn main() -> Result<(), ExitFailure> {
         CliCommand::Rebuild => {
             println!("rebuild is DEPRECATED, use `pndev reset docker` instead");
             Command::reset(ResetType::Docker)
-        },
+        }
         CliCommand::Gh => Command::gh(),
         CliCommand::Console => Command::console(),
     };

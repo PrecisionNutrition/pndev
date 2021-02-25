@@ -171,10 +171,7 @@ impl Command {
     pub fn console() -> Result<(), Error> {
         trace!("console command");
 
-        Self::new()
-            .check()?
-            ._up()?
-            ._console()?;
+        Self::new().check()?._up()?._console()?;
 
         Ok(())
     }

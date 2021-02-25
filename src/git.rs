@@ -1,11 +1,11 @@
 use crate::config;
 use ansi_term::Colour::{Green, Red, Yellow};
 use failure::{bail, Error};
+use lazy_static::lazy_static;
 use log::trace;
+use regex::Regex;
 use std::fs;
 use std::process::Command;
-use regex::Regex;
-use lazy_static::lazy_static;
 
 /// Clones a github repo from the PN org
 pub fn clone(name: &str) -> Result<(), Error> {
@@ -126,12 +126,22 @@ fn run_git_command(args: &[&str]) -> Result<(), Error> {
     }
 }
 
-fn extract_repo_name(input: &str) -> Option<&str> {
+fn extract_repo_name(input: &str) -> Option<[&str; 2]> {
     lazy_static! {
-        static ref RE: Regex = Regex::new(r".*PrecisionNutrition/(?P<repo_name>.*)\.git").unwrap();
+        static ref RE: Regex =
+            Regex::new(r".*:(?P<org_name>.*)/(?P<repo_name>.*)(\.git)?").unwrap();
     }
+    //RE.captures(input)
+    //    .and_then(|cap| cap.name("repo_name").map(|repo_name| repo_name.as_str()));
+
+    trace!("running input {:?}", input);
     RE.captures(input).and_then(|cap| {
-        cap.name("repo_name").map(|repo_name| repo_name.as_str())
+        trace!("running regex {:?}", cap);
+        cap.name("repo_name").and_then(|repo_name| {
+            trace!("running regex2 {:?}", repo_name);
+            cap.name("org_name")
+                .map(|org_name| [org_name.as_str(), repo_name.as_str()])
+        })
     })
 }
 
@@ -148,15 +158,15 @@ pub fn open() -> Result<(), Error> {
                 let remote = std::str::from_utf8(&output.stdout).unwrap();
 
                 match extract_repo_name(remote) {
-                    Some(repo_name) => {
-                        let repo_url = format!("https://github.com/PrecisionNutrition/{}", repo_name);
+                    Some([org_name, repo_name]) => {
+                        let repo_url = format!("https://github.com/{}/{}", org_name, repo_name);
 
                         trace!("repo_url {:?}", repo_url);
 
                         open::that(repo_url).unwrap();
 
                         Ok(())
-                    },
+                    }
                     None => bail!("Could not determine repo url"),
                 }
             } else {

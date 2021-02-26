@@ -131,10 +131,9 @@ fn extract_repo_name(input: &str) -> Option<[&str; 2]> {
         static ref RE: Regex =
             Regex::new(r".*:(?P<org_name>.*)/(?P<repo_name>.*)(\.git)?").unwrap();
     }
-    //RE.captures(input)
-    //    .and_then(|cap| cap.name("repo_name").map(|repo_name| repo_name.as_str()));
 
     trace!("running input {:?}", input);
+
     RE.captures(input).and_then(|cap| {
         trace!("running regex {:?}", cap);
         cap.name("repo_name").and_then(|repo_name| {

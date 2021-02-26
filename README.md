@@ -69,7 +69,6 @@ then you can `cd` in one of the supported applications
 * [fitpro](https://github.com/PrecisionNutrition/fitpro)
 * [payment-next](https://github.com/PrecisionNutrition/payment-next)
 
-
 #### Usage:
 
 ```bash
@@ -149,7 +148,6 @@ run `pndev doctor` again and all checks should be green
 Stops all docker instances
 it's equivalent to `docker-compose down` for postsgres, rails etc
 
-
 #### Usage:
 
 ```bash
@@ -203,7 +201,6 @@ Optionally you can also pass a `pndev prepare -b` that will restore a bigger dat
 
 Print status of all docker services
 
-
 #### Usage:
 
 ```bash
@@ -239,8 +236,6 @@ pndev reset <deps, docker, scratch>
 Easily review pull requests, even when they span multiple repositories
 
 Use this command to checkout a specific PR using the branch name
-
-
 
 #### Usage:
 
@@ -294,7 +289,6 @@ based on the directory you're in.
 Remember that to use one ember app you should always ALSO
 have rails running
 
-
 #### Usage:
 
 ```bash
@@ -324,30 +318,17 @@ Downloads and installs the most recent version of pndev
 pndev update
 ```
 
-
 ## Developing
 
 This project uses a nix-shell to provide the build environment
 
-type
+Start a shell with...
 
 ```
 nix-shell
 ```
 
-in your console to start.
-
-On first use you will have to install the toolchain
-
-```
-rustup toolchain install stable
-```
-
-On Mac, you may also have to manually set the default toolchain
-
-```
-rustup default stable
-```
+...in your console to start.
 
 On later uses the basic workflow is
 
@@ -378,7 +359,6 @@ cargo clippy --all-targets --all-features -- -D warnings
 * `git tag X.X.X`
 * `git push`
 * `git push --tags`
-
 
 ## Known Issues
 

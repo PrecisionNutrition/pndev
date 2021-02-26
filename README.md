@@ -42,6 +42,7 @@ https://www.notion.so/precisionnutrition/Set-Up-Your-Local-Dev-Environment-bb651
 - [clone](#clone)
 - [doctor](#doctor)
 - [down](#down)
+- [gh](#gh)
 - [help](#help)
 - [prepare](#prepare)
 - [ps](#ps)
@@ -154,6 +155,17 @@ it's equivalent to `docker-compose down` for postsgres, rails etc
 ```bash
 pndev down
 ```
+
+### Gh
+
+Open the current project's github URL.
+
+#### Usage:
+
+```bash
+pndev gh
+```
+
 ### Help
 
 Print help message and gives help on a specific command

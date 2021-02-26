@@ -158,9 +158,13 @@ enum CliCommand {
     /// opens the corresponding repo on github if available
     Gh,
 
-    #[structopt(name = "console")]
-    /// starts a rails console in the shell
-    Console,
+    #[structopt(name = "run")]
+    /// run a command by name
+    Run {
+        #[structopt(name = "name")]
+        /// name of the command in pndev.toml
+        name: Option<String>,
+    },
 }
 
 // CLI definition
@@ -204,7 +208,7 @@ fn main() -> Result<(), ExitFailure> {
             Command::reset(ResetType::Docker)
         }
         CliCommand::Gh => Command::gh(),
-        CliCommand::Console => Command::console(),
+        CliCommand::Run { name } => Command::run(name),
     };
 
     Ok(command_result?)

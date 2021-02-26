@@ -168,10 +168,10 @@ impl Command {
         Ok(())
     }
 
-    pub fn console() -> Result<(), Error> {
-        trace!("console command");
+    pub fn run(name: Option<String>) -> Result<(), Error> {
+        trace!("run command");
 
-        Self::new().check()?._up()?._console()?;
+        Self::new().name(name).check()?._up()?._run()?;
 
         Ok(())
     }
@@ -232,13 +232,14 @@ impl Command {
         Ok(self)
     }
 
-    fn _console(&self) -> Result<&Self, Error> {
-        trace!("calling _console and passing to shell");
+    fn _run(&self) -> Result<&Self, Error> {
+        trace!("calling _run and passing to shell");
 
-        if Path::new("pndev.toml").exists() {
-            shell::run("bundle exec rails console")?;
-        } else {
-            bail!("No Rails application found")
+        match &self.name {
+            Some(name) => {
+                run_pndev_toml_command(name)?;
+            }
+            None => bail!("Please specify a command to run"),
         }
 
         Ok(self)

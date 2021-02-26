@@ -48,6 +48,7 @@ https://www.notion.so/precisionnutrition/Set-Up-Your-Local-Dev-Environment-bb651
 - [rebuild](#rebuild)
 - [reset](#reset)
 - [review](#review)
+- [run](#run)
 - [shell](#shell)
 - [start](#start)
 - [stop](#stop)
@@ -264,6 +265,26 @@ Starting catalog_nginx_1         ... done
 ✓ successfully checked out fitpro:DS-50
 ⚠ remote branch not found for es-certification:DS-50
 ⚠ remote branch not found for payment-next:DS-50
+```
+
+### Run
+
+Run a command defined in the project's local pndev.toml file. 
+
+This allows you to add new commands to pndev without having to add them via rust code.
+
+#### Usage:
+
+Assuming a pndev.toml file in your local project with:
+
+```
+console = "bundle exec rails console"
+```
+
+Run this command with:
+
+```bash
+pndev run console
 ```
 
 ### Shell

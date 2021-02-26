@@ -1,8 +1,8 @@
 #![warn(
    clippy::all,
+   clippy::nursery,
    //clippy::restriction,
    //clippy::pedantic,
-   clippy::nursery,
    //clippy::cargo,
 )]
 #![allow(clippy::non_ascii_literal)]
@@ -32,8 +32,10 @@ mod command;
 /// Self update
 mod update;
 
+/// Configuration
 mod config;
 
+/// Utils
 mod opt_log;
 mod parse;
 

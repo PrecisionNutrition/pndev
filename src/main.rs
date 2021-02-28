@@ -1,8 +1,8 @@
 #![warn(
    clippy::all,
+   clippy::nursery,
    //clippy::restriction,
    //clippy::pedantic,
-   clippy::nursery,
    //clippy::cargo,
 )]
 #![allow(clippy::non_ascii_literal)]
@@ -32,8 +32,10 @@ mod command;
 /// Self update
 mod update;
 
+/// Configuration
 mod config;
 
+/// Utils
 mod opt_log;
 mod parse;
 
@@ -151,6 +153,18 @@ enum CliCommand {
     #[structopt(name = "rebuild")]
     /// rebuild docker containers after downloading new config
     Rebuild,
+
+    #[structopt(name = "gh")]
+    /// opens the corresponding repo on github if available
+    Gh,
+
+    #[structopt(name = "run")]
+    /// run a command by name
+    Run {
+        #[structopt(name = "name")]
+        /// name of the command in pndev.toml
+        name: Option<String>,
+    },
 }
 
 // CLI definition
@@ -193,6 +207,8 @@ fn main() -> Result<(), ExitFailure> {
             println!("rebuild is DEPRECATED, use `pndev reset docker` instead");
             Command::reset(ResetType::Docker)
         }
+        CliCommand::Gh => Command::gh(),
+        CliCommand::Run { name } => Command::run(name),
     };
 
     Ok(command_result?)

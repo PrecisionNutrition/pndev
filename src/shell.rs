@@ -66,6 +66,7 @@ impl<'a> Shell<'a> {
 
         if Path::new(&path).exists() {
             info!("pndev already cloned, if you want to update run git update in /DEV/PN/pndev");
+
             Ok(())
         } else {
             git::clone("pndev")
@@ -102,8 +103,8 @@ fn _docker_up(force_recreate: bool) -> Result<ExitStatus, Error> {
         "{}/pndev/catalog/docker-compose.yml",
         config::Config::new().repo_path()
     );
-    args.push(&pndev_path);
 
+    args.push(&pndev_path);
     args.extend_from_slice(&["up", "-d"]);
 
     if force_recreate {
@@ -126,8 +127,8 @@ pub fn docker_down() -> Result<ExitStatus, Error> {
         "{}/pndev/catalog/docker-compose.yml",
         config::Config::new().repo_path()
     );
-    args.push(&pndev_path);
 
+    args.push(&pndev_path);
     args.extend_from_slice(&["down"]);
 
     Shell::new()
@@ -144,8 +145,8 @@ pub fn docker_ps() -> Result<ExitStatus, Error> {
         "{}/pndev/catalog/docker-compose.yml",
         config::Config::new().repo_path()
     );
-    args.push(&pndev_path);
 
+    args.push(&pndev_path);
     args.extend_from_slice(&["ps"]);
 
     Shell::new()
@@ -162,8 +163,8 @@ pub fn docker_rebuild() -> Result<ExitStatus, Error> {
         "{}/pndev/catalog/docker-compose.yml",
         config::Config::new().repo_path()
     );
-    args.push(&pndev_path);
 
+    args.push(&pndev_path);
     args.extend_from_slice(&["build", "--no-cache"]);
 
     Shell::new()

@@ -160,6 +160,22 @@ impl Command {
         Ok(())
     }
 
+    pub fn gh() -> Result<(), Error> {
+        trace!("gh command");
+
+        git::open()?;
+
+        Ok(())
+    }
+
+    pub fn run(name: Option<String>) -> Result<(), Error> {
+        trace!("run command");
+
+        Self::new().name(name).check()?._up()?._run()?;
+
+        Ok(())
+    }
+
     pub fn all(&mut self, all: bool) -> &mut Self {
         self.all = all;
         self
@@ -193,10 +209,12 @@ impl Command {
     }
 
     pub fn _nix(&self) -> Result<&Self, Error> {
-        trace!("shell started ");
+        trace!("shell started");
+
         shell::nix()?;
 
         trace!("shell closed");
+
         Ok(self)
     }
 
@@ -214,8 +232,22 @@ impl Command {
         Ok(self)
     }
 
+    fn _run(&self) -> Result<&Self, Error> {
+        trace!("calling _run and passing to shell");
+
+        match &self.name {
+            Some(name) => {
+                run_pndev_toml_command(name)?;
+            }
+            None => bail!("Please specify a command to run"),
+        }
+
+        Ok(self)
+    }
+
     fn _down(&self) -> Result<&Self, Error> {
         shell::docker_down()?;
+
         Ok(self)
     }
 
@@ -245,6 +277,7 @@ impl Command {
 
     fn _reset(&self) -> Result<&Self, Error> {
         trace!("calling _reset and passing to shell");
+
         shell::reset()?;
 
         Ok(self)
@@ -263,6 +296,7 @@ impl Command {
 
     fn _scratch(&self) -> Result<&Self, Error> {
         run_pndev_toml_command("scratch")?;
+
         Ok(self)
     }
 
@@ -290,7 +324,7 @@ impl Command {
                 }
                 None => bail!("Please specify an app name or --all"),
             }
-        };
+        }
 
         Ok(self)
     }

@@ -1,22 +1,18 @@
-with (import <nixpkgs> {});
+# to update the nix-channel run `nix-shell -p niv --run 'niv update'`
+{ sources ? import ./nix/sources.nix }:
+with (import sources.nixpkgs { });
 let
-  moz_overlay = import (builtins.fetchTarball https://github.com/mozilla/nixpkgs-mozilla/archive/master.tar.gz);
-  nixpkgs = import <nixpkgs> { overlays = [ moz_overlay ]; };
-  ruststable = (nixpkgs.latest.rustChannels.stable.rust.override { extensions = [ "rust-src" "rls-preview" "rust-analysis" "rustfmt-preview" ];});
-  basePackages = [ openssl nasm rustup ruststable cmake zlib gnumake gcc readline openssl libxml2 curl];
+  basePackages =
+    [ cargo gcc openssl pkg-config readline rustc rustfmt rustup zlib ];
 
   inputs = if system == "x86_64-darwin" then
-              basePackages ++ [darwin.apple_sdk.frameworks.CoreServices]
-           else
-              basePackages;
-in
-  with nixpkgs;
-  stdenv.mkDerivation {
-    name = "rust";
-    buildInputs = inputs;
+    basePackages ++ [ darwin.apple_sdk.frameworks.CoreServices ]
+  else
+    basePackages;
 
-    shellHook = ''
-        export OPENSSL_DIR="${nixpkgs.openssl.dev}"
-        export OPENSSL_LIB_DIR="${nixpkgs.openssl.out}/lib"
-    '';
-  }
+in pkgs.mkShell {
+  buildInputs = inputs;
+
+  # See https://discourse.nixos.org/t/rust-src-not-found-and-other-misadventures-of-developing-rust-on-nixos/11570/3?u=samuela.
+  RUST_SRC_PATH = "${rust.packages.stable.rustPlatform.rustLibSrc}";
+}

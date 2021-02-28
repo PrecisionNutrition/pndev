@@ -1,7 +1,9 @@
 use crate::config;
 use ansi_term::Colour::{Green, Red, Yellow};
 use failure::{bail, Error};
+use lazy_static::lazy_static;
 use log::trace;
+use regex::Regex;
 use std::fs;
 use std::process::Command;
 
@@ -116,6 +118,56 @@ fn run_git_command(args: &[&str]) -> Result<(), Error> {
         Ok(output) => {
             if output.status.code().unwrap() % 255 == 0 {
                 Ok(())
+            } else {
+                bail!("{}", std::str::from_utf8(&output.stderr).unwrap())
+            }
+        }
+        Err(err) => bail!("{} error", err),
+    }
+}
+
+fn extract_repo_name(input: &str) -> Option<[&str; 2]> {
+    lazy_static! {
+        static ref RE: Regex =
+            Regex::new(r".*:(?P<org_name>.*)/(?P<repo_name>.*)(\.git)?").unwrap();
+    }
+
+    trace!("running input {:?}", input);
+
+    RE.captures(input).and_then(|cap| {
+        trace!("running regex {:?}", cap);
+        cap.name("repo_name").and_then(|repo_name| {
+            trace!("running regex2 {:?}", repo_name);
+            cap.name("org_name")
+                .map(|org_name| [org_name.as_str(), repo_name.as_str()])
+        })
+    })
+}
+
+// Opens github repo in PN org
+pub fn open() -> Result<(), Error> {
+    let args = ["remote", "get-url", "origin"];
+    let result = Command::new("git").args(&args).output();
+
+    trace!("running git {:?}", result);
+
+    match result {
+        Ok(output) => {
+            if output.status.code().unwrap() % 255 == 0 {
+                let remote = std::str::from_utf8(&output.stdout).unwrap();
+
+                match extract_repo_name(remote) {
+                    Some([org_name, repo_name]) => {
+                        let repo_url = format!("https://github.com/{}/{}", org_name, repo_name);
+
+                        trace!("repo_url {:?}", repo_url);
+
+                        open::that(repo_url).unwrap();
+
+                        Ok(())
+                    }
+                    None => bail!("Could not determine repo url"),
+                }
             } else {
                 bail!("{}", std::str::from_utf8(&output.stderr).unwrap())
             }

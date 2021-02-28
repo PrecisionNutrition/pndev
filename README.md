@@ -42,12 +42,14 @@ https://www.notion.so/precisionnutrition/Set-Up-Your-Local-Dev-Environment-bb651
 - [clone](#clone)
 - [doctor](#doctor)
 - [down](#down)
+- [gh](#gh)
 - [help](#help)
 - [prepare](#prepare)
 - [ps](#ps)
 - [rebuild](#rebuild)
 - [reset](#reset)
 - [review](#review)
+- [run](#run)
 - [shell](#shell)
 - [start](#start)
 - [stop](#stop)
@@ -68,7 +70,6 @@ then you can `cd` in one of the supported applications
 * [es-certification](https://github.com/PrecisionNutrition/es-certification)
 * [fitpro](https://github.com/PrecisionNutrition/fitpro)
 * [payment-next](https://github.com/PrecisionNutrition/payment-next)
-
 
 #### Usage:
 
@@ -149,12 +150,22 @@ run `pndev doctor` again and all checks should be green
 Stops all docker instances
 it's equivalent to `docker-compose down` for postsgres, rails etc
 
-
 #### Usage:
 
 ```bash
 pndev down
 ```
+
+### Gh
+
+Open the current project's github URL.
+
+#### Usage:
+
+```bash
+pndev gh
+```
+
 ### Help
 
 Print help message and gives help on a specific command
@@ -203,7 +214,6 @@ Optionally you can also pass a `pndev prepare -b` that will restore a bigger dat
 
 Print status of all docker services
 
-
 #### Usage:
 
 ```bash
@@ -240,8 +250,6 @@ Easily review pull requests, even when they span multiple repositories
 
 Use this command to checkout a specific PR using the branch name
 
-
-
 #### Usage:
 
 ```bash
@@ -271,6 +279,26 @@ Starting catalog_nginx_1         ... done
 ⚠ remote branch not found for payment-next:DS-50
 ```
 
+### Run
+
+Run a command defined in the project's local pndev.toml file. 
+
+This allows you to add new commands to pndev without having to add them via rust code.
+
+#### Usage:
+
+Assuming a pndev.toml file in your local project with:
+
+```
+console = "bundle exec rails console"
+```
+
+Run this command with:
+
+```bash
+pndev run console
+```
+
 ### Shell
 
 Starts a shell (a `nix-shell` to be precise),
@@ -293,7 +321,6 @@ based on the directory you're in.
 
 Remember that to use one ember app you should always ALSO
 have rails running
-
 
 #### Usage:
 
@@ -324,24 +351,17 @@ Downloads and installs the most recent version of pndev
 pndev update
 ```
 
-
 ## Developing
 
 This project uses a nix-shell to provide the build environment
 
-type
+Start a shell with...
 
 ```
 nix-shell
 ```
 
-in your console to start.
-
-On first use you will have to install the toolchain
-
-```
-rustup toolchain install stable
-```
+...in your console to start.
 
 On later uses the basic workflow is
 
@@ -355,7 +375,7 @@ using `cargo run` you have to use `--`
 example
 
 ```
-cargo run -- check -vvvv
+cargo run -- -vvvv doctor
 ```
 
 ### Use clippy
@@ -372,7 +392,6 @@ cargo clippy --all-targets --all-features -- -D warnings
 * `git tag X.X.X`
 * `git push`
 * `git push --tags`
-
 
 ## Known Issues
 

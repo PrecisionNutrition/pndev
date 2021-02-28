@@ -1,1 +1,1 @@
-status = ["test / clippy and fmt ubuntu-latest (push)"]
+status = ["clippy and fmt ubuntu-latest", "clippy and fmt macos-latest"]

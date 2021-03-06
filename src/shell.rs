@@ -84,8 +84,22 @@ impl Default for Shell<'_> {
     }
 }
 
-pub fn nix() -> Result<ExitStatus, Error> {
-    Shell::new().cmd("nix-shell").spawn()
+pub fn nix(arguments: &[String]) -> Result<ExitStatus, Error> {
+    if !arguments.is_empty() {
+        // TODO see if there's a better way to do this
+        let args = arguments
+            .iter()
+            .map(|s| s.as_str())
+            .collect::<Vec<&str>>()
+            .join(" ");
+
+        Shell::new()
+            .cmd("nix-shell")
+            .args(vec!["--run", &args])
+            .spawn()
+    } else {
+        Shell::new().cmd("nix-shell").spawn()
+    }
 }
 
 pub fn docker_up() -> Result<ExitStatus, Error> {

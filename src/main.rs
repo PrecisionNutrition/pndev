@@ -132,11 +132,17 @@ enum CliCommand {
 
     #[structopt(name = "shell")]
     /// start a nix-shell in the current application
-    Shell { command: Vec<String> },
+    Shell {
+        /// optional command to run in the shell
+        command: Vec<String>,
+    },
 
     #[structopt(name = "sh")]
-    /// start a nix-shell in the current application
-    Sh { command: Vec<String> },
+    /// alias to pndev shell
+    Sh {
+        /// optional command to run in the shell
+        command: Vec<String>,
+    },
 
     #[structopt(name = "ps")]
     /// print docker status
@@ -168,6 +174,9 @@ enum CliCommand {
         #[structopt(name = "name")]
         /// name of the command in pndev.toml
         name: Option<String>,
+
+        /// optional arguments for the run command
+        arguments: Vec<String>,
     },
 }
 
@@ -213,7 +222,7 @@ fn main() -> Result<(), ExitFailure> {
             Command::reset(ResetType::Docker)
         }
         CliCommand::Gh => Command::gh(),
-        CliCommand::Run { name } => Command::run(name),
+        CliCommand::Run { name, arguments } => Command::run(name, arguments),
     };
 
     Ok(command_result?)

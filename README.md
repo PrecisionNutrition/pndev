@@ -51,6 +51,7 @@ https://www.notion.so/precisionnutrition/Set-Up-Your-Local-Dev-Environment-bb651
 - [review](#review)
 - [run](#run)
 - [shell](#shell)
+- [sh](#shell)
 - [start](#start)
 - [stop](#stop)
 - [up](#up)
@@ -299,7 +300,7 @@ Run this command with:
 pndev run console
 ```
 
-### Shell
+### Shell (aliased to sh)
 
 Starts a shell (a `nix-shell` to be precise),
 this produces a shell with all the project dependencies (ruby, node, openssl..)
@@ -308,10 +309,21 @@ Use this shell to run commands like `bundle exec rails c` or `yarn run ember tes
 
 Remember to prefix commands with `bundle exec` or `yarn exec`
 
+can also optionally take arguments, if arguments are passed it will run those as a command in the shell instead of opening an bash shell.
+
 #### Usage:
 
 ```bash
-pndev reset
+# to start a normal shell
+pndev shell
+# or
+pndev sh
+
+# to run a command in a shell
+pndev sh rspec spec/models/activity_spec.rb
+
+# if the command you want to run takes flags use --
+pndev sh -- rake -T
 ```
 
 ### Start

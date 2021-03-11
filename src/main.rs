@@ -132,7 +132,11 @@ enum CliCommand {
 
     #[structopt(name = "shell")]
     /// start a nix-shell in the current application
-    Shell,
+    Shell { command: Vec<String> },
+
+    #[structopt(name = "sh")]
+    /// start a nix-shell in the current application
+    Sh { command: Vec<String> },
 
     #[structopt(name = "ps")]
     /// print docker status
@@ -193,7 +197,8 @@ fn main() -> Result<(), ExitFailure> {
             }
             Command::prepare(big)
         }
-        CliCommand::Shell => Command::shell(),
+        CliCommand::Shell { command } => Command::shell(command),
+        CliCommand::Sh { command } => Command::shell(command),
         CliCommand::Up => Command::up(),
         CliCommand::Start { docker } => Command::start(docker),
         CliCommand::Down => Command::down(),

@@ -43,6 +43,7 @@ const APPS: &[&str] = &[
 #[derive(Debug)]
 pub struct Command {
     name: Option<String>,
+    arguments: Vec<String>,
     pr: Option<String>,
     all: bool,
     docker_only: bool,
@@ -55,11 +56,14 @@ impl Command {
             pr: None,
             all: false,
             docker_only: false,
+            arguments: vec![],
         }
     }
 
-    pub fn shell() -> Result<(), Error> {
-        Self::new().check()?._up()?._nix()?;
+    pub fn shell(arguments: Vec<String>) -> Result<(), Error> {
+        trace!("shell command: {:?}", arguments);
+
+        Self::new().arguments(arguments).check()?._up()?._nix()?;
 
         Ok(())
     }
@@ -196,6 +200,11 @@ impl Command {
         self
     }
 
+    pub fn arguments(&mut self, arguments: Vec<String>) -> &mut Self {
+        self.arguments = arguments;
+        self
+    }
+
     pub fn check(&self) -> Result<&Self, Error> {
         check::all()?;
 
@@ -211,7 +220,7 @@ impl Command {
     pub fn _nix(&self) -> Result<&Self, Error> {
         trace!("shell started");
 
-        shell::nix()?;
+        shell::nix(&self.arguments)?;
 
         trace!("shell closed");
 

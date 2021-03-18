@@ -1,6 +1,6 @@
 [package]
 name = "pndev"
-version = "0.3.1"
+version = "0.3.2"
 authors = ["Mattia Gheda <ghedamat@gmail.com>"]
 edition = "2018"
 

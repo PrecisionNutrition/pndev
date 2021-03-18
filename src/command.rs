@@ -172,10 +172,15 @@ impl Command {
         Ok(())
     }
 
-    pub fn run(name: Option<String>) -> Result<(), Error> {
+    pub fn run(name: Option<String>, arguments: Vec<String>) -> Result<(), Error> {
         trace!("run command");
 
-        Self::new().name(name).check()?._up()?._run()?;
+        Self::new()
+            .name(name)
+            .arguments(arguments)
+            .check()?
+            ._up()?
+            ._run()?;
 
         Ok(())
     }
@@ -217,10 +222,18 @@ impl Command {
         Ok(self)
     }
 
+    fn _args_to_string(&self) -> String {
+        self.arguments
+            .iter()
+            .map(|s| s.as_str())
+            .collect::<Vec<&str>>()
+            .join(" ")
+    }
+
     pub fn _nix(&self) -> Result<&Self, Error> {
         trace!("shell started");
 
-        shell::nix(&self.arguments)?;
+        shell::nix(&self._args_to_string())?;
 
         trace!("shell closed");
 
@@ -231,7 +244,7 @@ impl Command {
         if self.docker_only {
             info!("Starting only docker services");
         } else if Path::new("pndev.toml").exists() {
-            run_pndev_toml_command("start")?;
+            self._run_pndev_toml_command("start")?;
         } else if Path::new("ember-cli-build.js").exists() {
             shell::ember_start()?;
         } else {
@@ -246,7 +259,7 @@ impl Command {
 
         match &self.name {
             Some(name) => {
-                run_pndev_toml_command(name)?;
+                self._run_pndev_toml_command(name)?;
             }
             None => bail!("Please specify a command to run"),
         }
@@ -304,16 +317,16 @@ impl Command {
     }
 
     fn _scratch(&self) -> Result<&Self, Error> {
-        run_pndev_toml_command("scratch")?;
+        self._run_pndev_toml_command("scratch")?;
 
         Ok(self)
     }
 
     fn _prepare(&self, big: bool) -> Result<&Self, Error> {
         if big {
-            run_pndev_toml_command("prepare")?;
+            self._run_pndev_toml_command("prepare")?;
         } else {
-            run_pndev_toml_command("quick_prepare")?;
+            self._run_pndev_toml_command("quick_prepare")?;
         }
 
         Ok(self)
@@ -357,24 +370,26 @@ impl Command {
 
         Ok(self)
     }
-}
 
-fn run_pndev_toml_command(name: &str) -> Result<(), Error> {
-    if Path::new("pndev.toml").exists() {
-        let command = parse::config()?;
-        match command.get(name) {
-            Some(cmd) => match cmd.as_str() {
-                Some(cmd) => {
-                    info!("executing {} command: {}", name, cmd);
-                    shell::run(cmd)?;
-                }
-                None => bail!("Invalid {} command", name),
-            },
-            None => bail!("No {} command found in pndev.toml", name),
+    fn _run_pndev_toml_command(&self, name: &str) -> Result<(), Error> {
+        if Path::new("pndev.toml").exists() {
+            let command = parse::config()?;
+            match command.get(name) {
+                Some(cmd) => match cmd.as_str() {
+                    Some(cmd) => {
+                        info!("executing {} command: {}", name, cmd);
+                        let args = self._args_to_string();
+
+                        shell::nix(&[cmd, &args].join(" "))?;
+                    }
+                    None => bail!("Invalid {} command", name),
+                },
+                None => bail!("No {} command found in pndev.toml", name),
+            }
+        } else {
+            bail!("pndev.toml not found")
         }
-    } else {
-        bail!("pndev.toml not found")
-    }
 
-    Ok(())
+        Ok(())
+    }
 }

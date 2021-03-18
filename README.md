@@ -300,6 +300,11 @@ Run this command with:
 pndev run console
 ```
 
+Arguments can be passed as well
+```bash
+pndev run console -- -e production
+```
+
 ### Shell (aliased to sh)
 
 Starts a shell (a `nix-shell` to be precise),

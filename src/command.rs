@@ -185,6 +185,19 @@ impl Command {
         Ok(())
     }
 
+    pub fn link(name: Option<String>) -> Result<(), Error> {
+        trace!("link command");
+
+        match name {
+            Some(_) => Self::new().name(name)._link()?,
+            None => Self::new()._list_links()?,
+        };
+
+        info!("link completed");
+
+        Ok(())
+    }
+
     pub fn all(&mut self, all: bool) -> &mut Self {
         self.all = all;
         self
@@ -367,6 +380,23 @@ impl Command {
             },
             None => bail!("Please specify a Pull Request (branch name)"),
         }
+
+        Ok(self)
+    }
+
+    fn _link(&self) -> Result<&Self, Error> {
+        match &self.name {
+            Some(name) => {
+                info!("Linking {}", name);
+            }
+            None => bail!("Please specify a package to yarn link")
+        }
+
+        Ok(self)
+    }
+
+    fn _list_links(&self) -> Result<&Self, Error> {
+        info!("List yarn links");
 
         Ok(self)
     }

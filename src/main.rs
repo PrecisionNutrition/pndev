@@ -178,6 +178,14 @@ enum CliCommand {
         /// optional arguments for the run command
         arguments: Vec<String>,
     },
+
+    #[structopt(name = "link")]
+    /// links yarn package by "name" or list linked packages if not supplied
+    Link {
+        #[structopt(name = "name")]
+        /// name of the package to link
+        name: Option<String>,
+    }
 }
 
 // CLI definition
@@ -223,6 +231,7 @@ fn main() -> Result<(), ExitFailure> {
         }
         CliCommand::Gh => Command::gh(),
         CliCommand::Run { name, arguments } => Command::run(name, arguments),
+        CliCommand::Link { name } => Command::link(name),
     };
 
     Ok(command_result?)

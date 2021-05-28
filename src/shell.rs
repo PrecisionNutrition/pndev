@@ -95,10 +95,14 @@ pub fn docker_up_recreate() -> Result<ExitStatus, Error> {
 fn _docker_up(force_recreate: bool) -> Result<ExitStatus, Error> {
     let mut args = vec!["-f"];
 
-    let pndev_path = format!(
-        "{}/pndev/catalog/docker-compose.yml",
-        config::Config::new().repo_path()
-    );
+    let pndev_path = if Path::new("docker-compose.yml").exists() {
+        String::from("docker-compose.yml")
+    } else {
+        format!(
+            "{}/pndev/catalog/docker-compose.yml",
+            config::Config::new().repo_path()
+        )
+    };
 
     args.push(&pndev_path);
     args.extend_from_slice(&["up", "-d"]);
@@ -119,10 +123,14 @@ fn _docker_up(force_recreate: bool) -> Result<ExitStatus, Error> {
 pub fn docker_down() -> Result<ExitStatus, Error> {
     let mut args = vec!["-f"];
 
-    let pndev_path = format!(
-        "{}/pndev/catalog/docker-compose.yml",
-        config::Config::new().repo_path()
-    );
+    let pndev_path = if Path::new("docker-compose.yml").exists() {
+        String::from("docker-compose.yml")
+    } else {
+        format!(
+            "{}/pndev/catalog/docker-compose.yml",
+            config::Config::new().repo_path()
+        )
+    };
 
     args.push(&pndev_path);
     args.extend_from_slice(&["down"]);
@@ -137,10 +145,14 @@ pub fn docker_down() -> Result<ExitStatus, Error> {
 pub fn docker_ps() -> Result<ExitStatus, Error> {
     let mut args = vec!["-f"];
 
-    let pndev_path = format!(
-        "{}/pndev/catalog/docker-compose.yml",
-        config::Config::new().repo_path()
-    );
+    let pndev_path = if Path::new("docker-compose.yml").exists() {
+        String::from("docker-compose.yml")
+    } else {
+        format!(
+            "{}/pndev/catalog/docker-compose.yml",
+            config::Config::new().repo_path()
+        )
+    };
 
     args.push(&pndev_path);
     args.extend_from_slice(&["ps"]);
@@ -155,10 +167,14 @@ pub fn docker_ps() -> Result<ExitStatus, Error> {
 pub fn docker_rebuild() -> Result<ExitStatus, Error> {
     let mut args = vec!["-f"];
 
-    let pndev_path = format!(
-        "{}/pndev/catalog/docker-compose.yml",
-        config::Config::new().repo_path()
-    );
+    let pndev_path = if Path::new("docker-compose.yml").exists() {
+        String::from("docker-compose.yml")
+    } else {
+        format!(
+            "{}/pndev/catalog/docker-compose.yml",
+            config::Config::new().repo_path()
+        )
+    };
 
     args.push(&pndev_path);
     args.extend_from_slice(&["build", "--no-cache"]);

@@ -110,7 +110,7 @@ fn _docker_up(force_recreate: bool) -> Result<ExitStatus, Error> {
     if force_recreate {
         args.push("--force-recreate");
     } else {
-        args.push("--no-recreate");
+        //args.push("--no-recreate");
     }
 
     Shell::new()

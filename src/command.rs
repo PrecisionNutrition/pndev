@@ -243,8 +243,12 @@ impl Command {
     fn _start(&self) -> Result<&Self, Error> {
         if self.docker_only {
             info!("Starting only docker services");
-        } else if Path::new("pndev.toml").exists() {
+        } else if Path::new("Makefile").exists() {
             self._run_make_target("start")?;
+        // TODO delete when all projects are moved to Makefile
+        } else if Path::new("pndev.toml").exists() {
+            self._run_pndev_toml_command("start")?;
+        // TODO delete when all projects are moved to Makefile
         } else if Path::new("ember-cli-build.js").exists() {
             shell::ember_start()?;
         } else {
@@ -317,16 +321,29 @@ impl Command {
     }
 
     fn _scratch(&self) -> Result<&Self, Error> {
-        self._run_make_target("scratch")?;
+        if Path::new("Makefile").exists() {
+            self._run_make_target("scratch")?;
+        // TODO delete when all projects are moved to Makefile
+        } else if Path::new("pndev.toml").exists() {
+            self._run_pndev_toml_command("scratch")?;
+        }
 
         Ok(self)
     }
 
     fn _prepare(&self, big: bool) -> Result<&Self, Error> {
         if big {
-            self._run_make_target("prepare")?;
-        } else {
+            if Path::new("Makefile").exists() {
+                self._run_make_target("prepare")?;
+            // TODO delete when all projects are moved to Makefile
+            } else {
+                self._run_pndev_toml_command("prepare")?;
+            }
+        } else if Path::new("Makefile").exists() {
             self._run_make_target("quick_prepare")?;
+        // TODO delete when all projects are moved to Makefile
+        } else {
+            self._run_pndev_toml_command("quick_prepare")?;
         }
 
         Ok(self)
@@ -394,7 +411,7 @@ impl Command {
     }
 
     fn _run_make_target(&self, target: &str) -> Result<(), Error> {
-        shell::nix(&["make", &target].join(" "))?;
+        shell::nix(&["make", target].join(" "))?;
         Ok(())
     }
 }

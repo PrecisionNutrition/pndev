@@ -244,7 +244,7 @@ impl Command {
         if self.docker_only {
             info!("Starting only docker services");
         } else if Path::new("pndev.toml").exists() {
-            self._run_pndev_toml_command("start")?;
+            self._run_command("start")?;
         } else if Path::new("ember-cli-build.js").exists() {
             shell::ember_start()?;
         } else {
@@ -317,16 +317,16 @@ impl Command {
     }
 
     fn _scratch(&self) -> Result<&Self, Error> {
-        self._run_pndev_toml_command("scratch")?;
+        self._run_command("scratch")?;
 
         Ok(self)
     }
 
     fn _prepare(&self, big: bool) -> Result<&Self, Error> {
         if big {
-            self._run_pndev_toml_command("prepare")?;
+            self._run_command("prepare")?;
         } else {
-            self._run_pndev_toml_command("quick_prepare")?;
+            self._run_command("quick_prepare")?;
         }
 
         Ok(self)
@@ -390,6 +390,11 @@ impl Command {
             bail!("pndev.toml not found")
         }
 
+        Ok(())
+    }
+
+    fn _run_command(&self, command: &str) -> Result<(), Error> {
+        shell::nix(&["./pndev", command].join("/"))?;
         Ok(())
     }
 }

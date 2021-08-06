@@ -178,6 +178,9 @@ enum CliCommand {
         /// optional arguments for the run command
         arguments: Vec<String>,
     },
+
+    #[structopt(external_subcommand)]
+    Other(Vec<String>),
 }
 
 // CLI definition
@@ -223,6 +226,11 @@ fn main() -> Result<(), ExitFailure> {
         }
         CliCommand::Gh => Command::gh(),
         CliCommand::Run { name, arguments } => Command::run(name, arguments),
+        CliCommand::Other(list) => {
+            let name = &list[0];
+            let arguments = &list[1..];
+            Command::run(Some(name.into()), Vec::from(arguments))
+        }
     };
 
     Ok(command_result?)

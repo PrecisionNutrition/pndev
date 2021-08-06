@@ -3,7 +3,7 @@
 with (import sources.nixpkgs { });
 let
   basePackages =
-    [ cargo gcc openssl pkg-config readline rustc rustfmt rustup zlib ];
+    [ cargo clippy gcc openssl pkg-config readline rustc rustfmt rustup zlib ];
 
   inputs = if system == "x86_64-darwin" then
     basePackages ++ [ darwin.apple_sdk.frameworks.CoreServices ]

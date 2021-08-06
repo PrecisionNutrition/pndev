@@ -243,8 +243,10 @@ impl Command {
     fn _start(&self) -> Result<&Self, Error> {
         if self.docker_only {
             info!("Starting only docker services");
-        } else if Path::new("pndev.toml").exists() {
+        } else if Path::new("pndev/start").exists() {
             self._run_command("start")?;
+        } else if Path::new("pndev.toml").exists() {
+            self._run_pndev_toml_command("start")?;
         } else if Path::new("ember-cli-build.js").exists() {
             shell::ember_start()?;
         } else {
@@ -259,7 +261,13 @@ impl Command {
 
         match &self.name {
             Some(name) => {
-                self._run_pndev_toml_command(name)?;
+                if Path::new(&["./pndev", name].join("/")).exists() {
+                    self._run_command(name)?;
+                } else if Path::new("pndev.toml").exists() {
+                    self._run_pndev_toml_command(name)?;
+                } else {
+                    bail!("Command {} not found", name);
+                }
             }
             None => bail!("Please specify a command to run"),
         }
@@ -317,16 +325,26 @@ impl Command {
     }
 
     fn _scratch(&self) -> Result<&Self, Error> {
-        self._run_command("scratch")?;
+        if Path::new("pndev/scratch").exists() {
+            self._run_command("scratch")?;
+        } else {
+            self._run_pndev_toml_command("scratch")?;
+        }
 
         Ok(self)
     }
 
     fn _prepare(&self, big: bool) -> Result<&Self, Error> {
         if big {
-            self._run_command("prepare")?;
-        } else {
+            if Path::new("pndev/prepare").exists() {
+                self._run_command("prepare")?;
+            } else {
+                self._run_pndev_toml_command("prepare")?;
+            }
+        } else if Path::new("pndev/quick_prepare").exists() {
             self._run_command("quick_prepare")?;
+        } else {
+            self._run_pndev_toml_command("quick_prepare")?;
         }
 
         Ok(self)
@@ -384,7 +402,7 @@ impl Command {
                     }
                     None => bail!("Invalid {} command", name),
                 },
-                None => bail!("No {} command found in pndev.toml", name),
+                None => bail!("Command {} not found", name),
             }
         } else {
             bail!("pndev.toml not found")

@@ -76,14 +76,14 @@ impl std::str::FromStr for ResetType {
 #[structopt(verbatim_doc_comment)]
 /// Welcome to pndev!
 ///
-/// pndev includes a built it set of commands listed under SUBCOMMANDS
-///
-/// Every command is executed within the local nix-shell
-/// before executing a command pndev ensures that docker-compose is running
+/// see SUBCOMMANDS below for the built in commands
 ///
 /// You can extend pndev by adding executable scripts to .pndev/
 /// invoking pndev YOURSCRIPT <ARGS>
 /// will attempt to call ./pndev YOURSCRIPT <ARGS>
+///
+/// Every command is executed within the local nix-shell
+/// before executing a command pndev ensures that docker-compose is running
 enum CliCommand {
     #[structopt(name = "doctor")]
     /// diagnose system setup for pndev
@@ -116,9 +116,6 @@ enum CliCommand {
     #[structopt(name = "prepare")]
     /// prepares the db for eternal-sledgehammer
     Prepare {
-        #[structopt(short = "q", long = "quick")]
-        /// Remote snapshot with no client data, no program data will be restored
-        quick: bool,
         #[structopt(short = "b", long = "big")]
         /// User a remote snapshot with some anonymized client data, then bootstrap
         big: bool,
@@ -159,7 +156,7 @@ enum CliCommand {
     Ps,
 
     #[structopt(name = "reset")]
-    /// Nukes the nix-shell config (use when ruby/node version changes)
+    /// when things go wrong
     Reset {
         /// deps, docker, scratch:  deps deletes local dependencies, docker updates the docker config, scratch wipes everything, including git changes
         #[structopt(name = "reset type")]
@@ -203,12 +200,7 @@ fn main() -> Result<(), ExitFailure> {
     info!("LogLevel Info");
 
     let command_result = match args.command {
-        CliCommand::Prepare { quick, big } => {
-            if quick {
-                println!("pndev prepare -q is DEPRECATED as it is the default now, use --big for the old prepare");
-            }
-            Command::prepare(big)
-        }
+        CliCommand::Prepare { big } => Command::prepare(big),
         CliCommand::Shell { command } => Command::shell(command),
         CliCommand::Sh { command } => Command::shell(command),
         CliCommand::Up => Command::up(),

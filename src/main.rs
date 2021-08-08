@@ -73,7 +73,17 @@ impl std::str::FromStr for ResetType {
 }
 
 #[derive(StructOpt, Debug)]
-/// Available commands
+#[structopt(verbatim_doc_comment)]
+/// Welcome to pndev!
+///
+/// pndev includes a built it set of commands listed under SUBCOMMANDS
+///
+/// Every command is executed within the local nix-shell
+/// before executing a command pndev ensures that docker-compose is running
+///
+/// You can extend pndev by adding executable scripts to .pndev/
+/// invoking pndev YOURSCRIPT <ARGS>
+/// will attempt to call ./pndev YOURSCRIPT <ARGS>
 enum CliCommand {
     #[structopt(name = "doctor")]
     /// diagnose system setup for pndev
@@ -168,18 +178,8 @@ enum CliCommand {
     /// opens the corresponding repo on github if available
     Gh,
 
-    #[structopt(name = "run")]
-    /// run a command by name
-    Run {
-        #[structopt(name = "name")]
-        /// name of the command in pndev.toml
-        name: Option<String>,
-
-        /// optional arguments for the run command
-        arguments: Vec<String>,
-    },
-
     #[structopt(external_subcommand)]
+    /// run any valid command in ./.pndev any argument will be passed verbatim
     Other(Vec<String>),
 }
 
@@ -225,7 +225,6 @@ fn main() -> Result<(), ExitFailure> {
             Command::reset(ResetType::Docker)
         }
         CliCommand::Gh => Command::gh(),
-        CliCommand::Run { name, arguments } => Command::run(name, arguments),
         CliCommand::Other(list) => {
             let name = &list[0];
             let arguments = &list[1..];

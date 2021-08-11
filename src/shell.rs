@@ -57,7 +57,8 @@ impl<'a> Shell<'a> {
         if code % 255 == 0 || code % 130 == 0 {
             Ok(status)
         } else {
-            bail!(self.error_msg.to_owned());
+            let error = format!("{} (exit code: {})", self.error_msg.to_owned(), code);
+            bail!(error);
         }
     }
 
@@ -212,7 +213,7 @@ pub fn run(cmd: &str) -> Result<ExitStatus, Error> {
     Shell::new()
         .cmd("nix-shell")
         .args(args)
-        .error_msg("nix-shell failed to run command")
+        .error_msg("nix-shell --run failed")
         .spawn()
 }
 

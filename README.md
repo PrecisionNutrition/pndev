@@ -29,6 +29,19 @@ pndev doctor
 
 ```
 install_path = 'DEV/PN'
+docker_compose_path = 'my-local-docker-config/docker-compose.yml' # NOT NEEDED
+```
+
+#### custom docker-compose config
+
+This should almost never be needed
+if you want to play with a custom docker config you can set it as above
+
+```
+cp -rv ~/DEV/PN/pndev/catalog ~/my-local-docker-config
+
+# edit ~/my-local-docker-config/docker-compose.yml
+
 ```
 
 

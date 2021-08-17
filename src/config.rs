@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
     install_path: String,
+    docker_compose_path: Option<String>,
 }
 
 /// `MyConfig` implements `Default`
@@ -12,6 +13,7 @@ impl ::std::default::Default for Config {
     fn default() -> Self {
         Self {
             install_path: String::from("DEV/PN"),
+            docker_compose_path: None,
         }
     }
 }
@@ -34,5 +36,20 @@ impl Config {
 
     pub fn repo_path(&self) -> String {
         format!("{}/{}", Self::home_path_str(), self.install_path)
+    }
+
+    pub fn docker_compose_path(&self) -> String {
+        match &self.docker_compose_path {
+            Some(path) => {
+                format!("{}/{}", Self::home_path_str(), path)
+            }
+            None => {
+                format!(
+                    "{}/{}/pndev/catalog/docker-compose.yml",
+                    Self::home_path_str(),
+                    self.install_path
+                )
+            }
+        }
     }
 }

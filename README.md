@@ -49,7 +49,6 @@ https://www.notion.so/precisionnutrition/Set-Up-Your-Local-Dev-Environment-bb651
 - [rebuild](#rebuild)
 - [reset](#reset)
 - [review](#review)
-- [run](#run)
 - [shell](#shell)
 - [sh](#shell)
 - [start](#start)
@@ -280,30 +279,6 @@ Starting catalog_nginx_1         ... done
 ⚠ remote branch not found for payment-next:DS-50
 ```
 
-### Run
-
-Run a command defined in the project's local pndev.toml file. 
-
-This allows you to add new commands to pndev without having to add them via rust code.
-
-#### Usage:
-
-Assuming a pndev.toml file in your local project with:
-
-```
-console = "bundle exec rails console"
-```
-
-Run this command with:
-
-```bash
-pndev run console
-```
-
-Arguments can be passed as well
-```bash
-pndev run console -- -e production
-```
 
 ### Shell (aliased to sh)
 
@@ -366,6 +341,37 @@ Downloads and installs the most recent version of pndev
 
 ```bash
 pndev update
+```
+
+### Run any command
+
+Run a command defined in the project's local `.pndev` directory as an executable script
+
+This allows you to add new commands to pndev without having to add them via rust code.
+
+#### Usage:
+
+Assuming you have a local `.pndev` directory in your current directory and that contains 
+executable any attempt to type `pndev ANYTHING` will try to run a script matching ANYTHING within a nix-shell
+
+```
+# /usr/bin/env bash
+
+# contents for .pndev/echo
+
+echo 'back at ya'
+echo $1
+```
+
+Run this command with:
+
+```bash
+pndev echo ciao
+```
+
+Arguments can be passed as well
+```bash
+pndev echo --argument
 ```
 
 ## Developing

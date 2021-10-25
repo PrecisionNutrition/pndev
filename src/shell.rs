@@ -1,5 +1,6 @@
 use crate::config;
 use crate::git;
+use ansi_term::Colour::Yellow;
 use failure::bail;
 use failure::Error;
 use log::info;
@@ -179,8 +180,38 @@ pub fn reset() -> Result<ExitStatus, Error> {
     Shell::new().cmd("rm").args(args2).spawn()
 }
 
+// pndev supports shell.nix to be in the current directory
+// OR in the root of the repository
+// this is useful when pndev is used in a monorepo setup
+// NOTE: would be nice to return &str here but my rust is failing me
+fn nix_shell_config_path() -> Result<String, Error> {
+    if Path::new("shell.nix").exists() {
+        trace!("using shell.nix from current dir");
+        Ok(String::from("shell.nix"))
+    } else {
+        let args = ["rev-parse", "--show-toplevel"];
+        let result = Command::new("git").args(&args).output();
+        match result {
+            Ok(output) => {
+                if output.status.code().unwrap() % 255 == 0 {
+                    let mut path = std::str::from_utf8(&output.stdout).unwrap().to_string();
+                    path.pop();
+                    path.push_str("/shell.nix");
+                    trace!("loading repo shell nix with path {:?}", path);
+                    println!("{} {}", Yellow.paint("Using:"), path);
+                    Ok(path)
+                } else {
+                    bail!("{}", std::str::from_utf8(&output.stderr).unwrap())
+                }
+            }
+            Err(err) => bail!("{} error", err),
+        }
+    }
+}
+
 pub fn run(cmd: &str) -> Result<ExitStatus, Error> {
-    let args = vec!["--run", cmd];
+    let path = nix_shell_config_path()?;
+    let args = vec!["--run", cmd, &path];
 
     Shell::new()
         .cmd("nix-shell")
@@ -193,6 +224,7 @@ pub fn nix(arguments: &str) -> Result<ExitStatus, Error> {
     if !arguments.is_empty() {
         run(arguments)
     } else {
-        Shell::new().cmd("nix-shell").spawn()
+        let path = nix_shell_config_path()?;
+        Shell::new().cmd("nix-shell").args(vec![&path]).spawn()
     }
 }

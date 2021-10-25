@@ -386,6 +386,29 @@ Arguments can be passed as well
 ```bash
 pndev echo --argument
 ```
+## Notes on dependency management
+
+`pndev` relies on `nix-shell` to run commands in an environment that has all the dependencies for your project.
+
+Every time a `pndev` command is executed, if the command requires to run something or give the user a working shell (i.e start, shell, run)
+then `pndev` internally delegates execution to the system using an "exec" call and wraps the command into a `nix-shell`.
+
+i.e
+
+```
+pndev echo ciao
+```
+
+internally executes
+
+```
+nix-shell --run "echo ciao"
+```
+
+`nix-shell` uses a `shell.nix` configuration file to determine what dependencies should be available.
+This `shell.nix` file can be present in the current working directory OR at the root of the repository.
+
+This also allows pndev to be used in a "monorepo" setup where each app has its own directory but they all use a shared `shell.nix` configuration.
 
 ## Developing
 

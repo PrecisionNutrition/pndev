@@ -184,7 +184,7 @@ pub fn reset() -> Result<ExitStatus, Error> {
 // OR in the root of the repository
 // this is useful when pndev is used in a monorepo setup
 // NOTE: would be nice to return &str here but my rust is failing me
-fn nix_sheel_config_path() -> Result<String, Error> {
+fn nix_shell_config_path() -> Result<String, Error> {
     if Path::new("shell.nix").exists() {
         trace!("using shell.nix from current dir");
         Ok(String::from("shell.nix"))
@@ -210,7 +210,7 @@ fn nix_sheel_config_path() -> Result<String, Error> {
 }
 
 pub fn run(cmd: &str) -> Result<ExitStatus, Error> {
-    let path = nix_sheel_config_path()?;
+    let path = nix_shell_config_path()?;
     let args = vec!["--run", cmd, &path];
 
     Shell::new()
@@ -224,7 +224,7 @@ pub fn nix(arguments: &str) -> Result<ExitStatus, Error> {
     if !arguments.is_empty() {
         run(arguments)
     } else {
-        let path = nix_sheel_config_path()?;
+        let path = nix_shell_config_path()?;
         Shell::new().cmd("nix-shell").args(vec![&path]).spawn()
     }
 }

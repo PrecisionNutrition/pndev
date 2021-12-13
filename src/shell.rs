@@ -161,7 +161,8 @@ pub fn docker_rebuild() -> Result<ExitStatus, Error> {
 }
 
 pub fn ember_start() -> Result<ExitStatus, Error> {
-    let args = vec!["--run", "yarn && yarn exec ember server"];
+    let path = nix_shell_config_path()?;
+    let args = vec!["--run", "yarn && yarn exec ember server", &path];
 
     Shell::new().cmd("nix-shell").args(args).spawn()
 }

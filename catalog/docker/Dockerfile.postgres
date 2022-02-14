@@ -1,2 +1,2 @@
-FROM postgres:11.7
+FROM postgres:12
 COPY docker/init-user-db.sh /docker-entrypoint-initdb.d/init-user-db.sh

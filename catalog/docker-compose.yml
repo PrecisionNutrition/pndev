@@ -24,7 +24,7 @@ x-default-links: &default_links
     - mailcatcher
 
 volumes:
-  pgdata11:
+  pgdata12:
   redis:
   redis_cache:
 
@@ -67,7 +67,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
     volumes:
-      - pgdata11:/var/lib/postgresql/data
+      - pgdata12:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     shm_size: 512mb

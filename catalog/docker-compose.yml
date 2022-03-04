@@ -43,7 +43,7 @@ services:
     links:
       - dockerhost
   mailcatcher:
-    image: schickling/mailcatcher
+    image: precisionnutrition/mailcatcher
     ports:
       - "1080:1080"
       - "1025:1025"

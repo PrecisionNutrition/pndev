@@ -191,7 +191,7 @@ fn nix_shell_config_path() -> Result<String, Error> {
         Ok(String::from("shell.nix"))
     } else {
         let args = ["rev-parse", "--show-toplevel"];
-        let result = Command::new("git").args(&args).output();
+        let result = Command::new("git").args(args).output();
         match result {
             Ok(output) => {
                 if output.status.code().unwrap() % 255 == 0 {

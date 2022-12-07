@@ -16,7 +16,7 @@ pub fn clone(name: &str) -> Result<(), Error> {
 
     fs::create_dir_all(dest)?;
 
-    let result = Command::new("git").args(&args).output();
+    let result = Command::new("git").args(args).output();
 
     trace!("running git {:?}", result);
 
@@ -40,7 +40,7 @@ pub fn update(name: &str) -> Result<(), Error> {
 
     std::env::set_current_dir(dest_path)?;
 
-    let result = Command::new("git").args(&args).output();
+    let result = Command::new("git").args(args).output();
 
     trace!("running git {:?}", result);
 
@@ -147,7 +147,7 @@ fn extract_repo_name(input: &str) -> Option<[&str; 2]> {
 // Opens github repo in PN org
 pub fn open() -> Result<(), Error> {
     let args = ["remote", "get-url", "origin"];
-    let result = Command::new("git").args(&args).output();
+    let result = Command::new("git").args(args).output();
 
     trace!("running git {:?}", result);
 

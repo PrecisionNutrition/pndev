@@ -72,7 +72,7 @@ fn check_anonymize_creds() -> bool {
 }
 
 fn check_app_installed(command: &str) -> bool {
-    let result = Command::new(command).args(&["--version"]).output();
+    let result = Command::new(command).args(["--version"]).output();
 
     result.is_ok()
 }
@@ -82,7 +82,7 @@ fn check_host() -> bool {
 }
 
 fn check_github() -> bool {
-    let result = Command::new("ssh").args(&["-T", "git@github.com"]).output();
+    let result = Command::new("ssh").args(["-T", "git@github.com"]).output();
 
     match result {
         // ssh -T returns 1 even if auth works

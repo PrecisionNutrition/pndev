@@ -39,17 +39,15 @@ impl Config {
     }
 
     pub fn docker_compose_path(&self) -> String {
-        match &self.docker_compose_path {
-            Some(path) => {
-                format!("{}/{}", Self::home_path_str(), path)
-            }
-            None => {
+        self.docker_compose_path.as_ref().map_or_else(
+            || {
                 format!(
                     "{}/{}/pndev/catalog/docker-compose.yml",
                     Self::home_path_str(),
                     self.install_path
                 )
-            }
-        }
+            },
+            |path| format!("{}/{}", Self::home_path_str(), path),
+        )
     }
 }

@@ -25,6 +25,7 @@ x-default-links: &default_links
 
 volumes:
   pgdata12:
+  percona57:
   redis:
   redis_cache:
 
@@ -71,3 +72,19 @@ services:
     ports:
       - "5432:5432"
     shm_size: 512mb
+  percona:
+    image: percona/percona-server:5.7
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+    volumes:
+      - percona57:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      PMA_HOST: percona
+      PMA_PORT: 3306

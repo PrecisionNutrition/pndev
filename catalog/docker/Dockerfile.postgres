@@ -1,2 +1,6 @@
 FROM postgres:12
+RUN apt-get update \
+ && apt-get install --no-install-recommends -y postgresql-12-ip4r \
+ && apt-get install --no-install-recommends -y postgresql-12-hll \
+ && rm -rf /var/lib/apt/lists/*
 COPY docker/init-user-db.sh /docker-entrypoint-initdb.d/init-user-db.sh

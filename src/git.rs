@@ -10,8 +10,8 @@ use std::process::Command;
 /// Clones a github repo from the PN org
 pub fn clone(name: &str) -> Result<(), Error> {
     let dest = config::Config::new().repo_path();
-    let app_path = format!("git@github.com:PrecisionNutrition/{}.git", name);
-    let dest_path = format!("{}/{}", dest, name);
+    let app_path = format!("git@github.com:PrecisionNutrition/{name}.git");
+    let dest_path = format!("{dest}/{name}");
     let args = ["clone", "--recurse-submodules", &app_path, &dest_path];
 
     fs::create_dir_all(dest)?;
@@ -35,7 +35,7 @@ pub fn clone(name: &str) -> Result<(), Error> {
 /// Updates a github repo from the PN org
 pub fn update(name: &str) -> Result<(), Error> {
     let dest = config::Config::new().repo_path();
-    let dest_path = format!("{}/{}", dest, name);
+    let dest_path = format!("{dest}/{name}");
     let args = ["pull", "--ff"];
 
     std::env::set_current_dir(dest_path)?;
@@ -59,7 +59,7 @@ pub fn update(name: &str) -> Result<(), Error> {
 /// Checks out a pr
 pub fn review(name: &str, pr: &str) -> Result<(), Error> {
     let dest = config::Config::new().repo_path();
-    let dest_path = format!("{}/{}", dest, name);
+    let dest_path = format!("{dest}/{name}");
     let args = ["fetch"];
 
     std::env::set_current_dir(dest_path)?;
@@ -86,7 +86,7 @@ pub fn review(name: &str, pr: &str) -> Result<(), Error> {
 }
 
 fn pr_checkout(name: &str, pr: &str) {
-    let origin = format!("origin/{}", pr);
+    let origin = format!("origin/{pr}");
     let args = ["checkout", "-b", pr, &origin];
     match run_git_command(&args) {
         Ok(_output) => {
@@ -158,7 +158,7 @@ pub fn open() -> Result<(), Error> {
 
                 match extract_repo_name(remote) {
                     Some([org_name, repo_name]) => {
-                        let repo_url = format!("https://github.com/{}/{}", org_name, repo_name);
+                        let repo_url = format!("https://github.com/{org_name}/{repo_name}");
 
                         trace!("repo_url {:?}", repo_url);
 

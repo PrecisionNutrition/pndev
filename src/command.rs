@@ -347,13 +347,13 @@ impl Command {
     fn _clone(&self) -> Result<&Self, Error> {
         if self.all {
             for &app in REPOS {
-                println!("Cloning {}", app);
+                println!("Cloning {app}");
                 git::clone(app)?;
             }
         } else {
             match &self.name {
                 Some(name) => {
-                    println!("Cloning {}", name);
+                    println!("Cloning {name}");
                     git::clone(name)?;
                 }
                 None => bail!("Please specify an app name or --all"),

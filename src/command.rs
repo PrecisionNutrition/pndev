@@ -28,11 +28,9 @@ const REPOS: &[&str] = &[
 const APPS: &[&str] = &[
     "crown-jewel",
     "eternal-sledgehammer",
-    "es-student",
     "fitpro",
     "es-admin",
-    "payment-next",
-    "academy",
+    "orchid",
 ];
 
 #[derive(Debug)]

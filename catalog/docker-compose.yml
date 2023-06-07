@@ -28,6 +28,7 @@ volumes:
   percona57:
   redis:
   redis_cache:
+  redis_nebula:
 
 services:
   dockerhost:
@@ -60,6 +61,12 @@ services:
       - "6379:6379"
     volumes:
       - redis:/data
+  redis_nebula:
+     image: redis/redis-stack-server:6.2.6-v7
+     ports:
+       - "6767:6379"
+     volumes:
+       - redis_nebula:/data
   postgres:
     build:
       context: .

@@ -5,8 +5,8 @@ let
   basePackages =
     [ cargo clippy gcc openssl pkg-config readline rustc rustfmt rustup zlib ];
 
-  inputs = if system == "x86_64-darwin" then
-    basePackages ++ [ darwin.apple_sdk.frameworks.CoreServices ]
+  inputs = if stdenv.isDarwin then
+    basePackages ++ [ darwin.apple_sdk.frameworks.CoreServices darwin.apple_sdk.frameworks.Security ]
   else
     basePackages;
 

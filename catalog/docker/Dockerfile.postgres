@@ -1,7 +1,7 @@
-FROM postgres:12
+FROM postgres:16
 RUN apt-get update \
- && apt-get install --no-install-recommends -y postgresql-12-ip4r \
- && apt-get install --no-install-recommends -y postgresql-12-hll \
- && apt-get install --no-install-recommends -y postgresql-12-pgvector \
+ && apt-get install --no-install-recommends -y postgresql-16-ip4r \
+ && apt-get install --no-install-recommends -y postgresql-16-hll \
+ && apt-get install --no-install-recommends -y postgresql-16-pgvector \
  && rm -rf /var/lib/apt/lists/*
 COPY docker/init-user-db.sh /docker-entrypoint-initdb.d/init-user-db.sh

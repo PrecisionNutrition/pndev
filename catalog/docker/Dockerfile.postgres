@@ -1,4 +1,4 @@
-FROM postgres:16
+FROM postgres:16.8
 RUN apt-get update \
  && apt-get install --no-install-recommends -y postgresql-16-ip4r \
  && apt-get install --no-install-recommends -y postgresql-16-hll \
